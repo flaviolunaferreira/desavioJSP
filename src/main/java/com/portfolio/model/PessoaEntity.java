@@ -8,7 +8,8 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "pessoa")
-public class PessoaEntity {
+@MappedSuperclass
+public class PessoaEntity extends BasicEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

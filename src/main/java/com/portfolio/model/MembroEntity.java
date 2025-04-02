@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "membro")
-public class MembroEntity {
+@MappedSuperclass
+public class MembroEntity extends BasicEntity{
 
     @Id
     @ManyToOne

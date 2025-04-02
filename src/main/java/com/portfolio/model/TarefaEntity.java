@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "tarefa")
-public class TarefaEntity {
+@MappedSuperclass
+public class TarefaEntity extends BasicEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
