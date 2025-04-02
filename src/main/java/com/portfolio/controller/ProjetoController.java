@@ -1,62 +1,59 @@
 package com.portfolio.controller;
 
+import com.portfolio.dto.projeto.ProjetoRequestDTO;
+import com.portfolio.dto.projeto.ProjetoResponseDTO;
+import com.portfolio.exception.ProjetoNotDeleteException;
+import com.portfolio.service.ProjetoService.ProjetoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("api/v1/projetos")
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@Controller
+@RequestMapping("/projects")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProjetoController {
 
+    private ProjetoService projetoService;
+
     /**
-     * Listar todos os projetos
-     * @return ResponseEntity<List<ProjetoResponseDTO>>
+     * Lista todos os projetos
+     * @return lista todos os projetos cadastrados.
      */
-    @GetMapping("/listar")
-    public RespnseEntity<List<?>> listarProjetos() {
-        return null;
+    @GetMapping
+    public ResponseEntity<List<ProjetoResponseDTO>> listarProjetos() {
+        return ResponseEntity.ok().body(projetoService.listarProjetos());
     }
 
     /**
-     * Exibe formulário para adicionar/editar um novo projeto
-     * @return String
+     * Busca um projeto pelo id
+     * @param projetoRequestDTO com os dados do projeto
+     * @return ProjetoResponseDTO
      */
-    @GetMapping("/form")
-    public String showProjectForm() {
-        return null;
+    @PostMapping
+    public ResponseEntity<ProjetoResponseDTO> saveProjeto(@ModelAttribute ProjetoRequestDTO projetoRequestDTO) {
+        return ResponseEntity.ok().body(projetoService.save(projetoRequestDTO));
     }
 
     /**
-     * Adiciona um novo projeto
-     * @param projetoRequestDTO
-     * @return ResponseEntity<ProjetoResponseDTO>
+     * Atualiza um projeto
+     * @param projetoRequestDTO, idProjeto
+     * @return ProjetoResponseDTO
      */
-    @PostMapping("/")
-    public ResponseEntity<?> adicionarProjeto(@RequestBody ProjetoRequestDTO projetoRequestDTO) {
-        return null;
+    @PutMapping
+    public ResponseEntity<ProjetoResponseDTO> updateProjeto(@ModelAttribute ProjetoRequestDTO projetoRequestDTO, Long idProjeto) {
+        return ResponseEntity.ok().body(projetoService.update(projetoRequestDTO, idProjeto));
     }
 
     /**
-     * Edita um projeto existente
-     * @param id
-     * @param projetoRequestDTO
-     * @return ResponseEntity<ProjetoResponseDTO>
+     * Apaga um projeto pelo id
+     * @param id do projeto que deseja apagar
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> editarProjeto(@PathVariable Long id, @RequestBody ProjetoRequestDTO projetoRequestDTO) {
-        return null;
-    }
-
-    /**
-     * Apaga um projeto existente
-     * @param id
-     * @return ResponseEntity<Void>
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarProjeto(@PathVariable Long id) {
-        return null;
+    @GetMapping("/delete/{id}")
+    public void deleteProject(@PathVariable Long id) throws ProjetoNotDeleteException {
+        projetoService.delete(id);
     }
 }
