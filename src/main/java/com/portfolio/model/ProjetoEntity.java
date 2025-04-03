@@ -1,37 +1,53 @@
 package com.portfolio.model;
 
+import com.portfolio.model.enumeration.RiscoProjeto;
+import com.portfolio.model.enumeration.StatusProjeto;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "projeto")
-@MappedSuperclass
-public class ProjetoEntity extends BasicEntity{
+public class ProjetoEntity extends BasicEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String nome;
 
+    @Column(name = "data_inicio", nullable = false)
     private LocalDate dataInicio;
 
+    @Column(name = "data_previsao_fim", nullable = false)
     private LocalDate dataPrevisaoFim;
 
+    @Column(name = "data_fim")
     private LocalDate dataFim;
 
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private StatusProjeto status;
 
-    private Double orcamento;
+    @Column(columnDefinition = "DECIMAL(15,2)")
+    private BigDecimal orcamento;
 
-    private String risco;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 15)
+    private RiscoProjeto risco;
 
-    @ManyToOne
-    @JoinColumn(name = "idgerente", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_gerente", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_projeto_gerente"))
     private PessoaEntity gerente;
 }
+
