@@ -12,12 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/projetos")
 @Tag(name = "Projetos", description = "Gerenciamento do portfólio de projetos")
 public class ProjetoController {
