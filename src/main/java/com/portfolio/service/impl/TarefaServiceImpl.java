@@ -1,7 +1,6 @@
 package com.portfolio.service.impl;
 
-import com.portfolio.dto.*;
-import com.portfolio.dto.TarefaStatusDTO;
+import com.portfolio.dto.tarefa.TarefaStatusDTO;
 import com.portfolio.dto.tarefa.TarefaRequestDTO;
 import com.portfolio.dto.tarefa.TarefaResponseDTO;
 import com.portfolio.dto.tarefa.TarefaUpdateDTO;

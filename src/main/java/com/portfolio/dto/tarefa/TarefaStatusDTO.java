@@ -1,4 +1,4 @@
-package com.portfolio.dto;
+package com.portfolio.dto.tarefa;
 
 import com.portfolio.model.enumeration.StatusTarefa;
 import com.portfolio.model.TarefaEntity;

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "membro")
-@IdClass(MembroId.class)  // Classe que representa a chave composta
+@IdClass(MembroId.class)
 public class MembroEntity extends BasicEntity {
 
     @Id
@@ -25,7 +25,6 @@ public class MembroEntity extends BasicEntity {
             foreignKey = @ForeignKey(name = "fk_membro_pessoa"))
     private PessoaEntity pessoa;
 
-    // Campos adicionais do relacionamento (se necessário)
     @Column(name = "data_entrada", nullable = false)
     private LocalDate dataEntrada;
 

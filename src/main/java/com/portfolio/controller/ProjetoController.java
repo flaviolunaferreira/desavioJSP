@@ -1,6 +1,5 @@
 package com.portfolio.controller;
 
-import com.portfolio.dto.*;
 import com.portfolio.dto.projeto.ProjetoRequestDTO;
 import com.portfolio.dto.projeto.ProjetoResponseDTO;
 import com.portfolio.dto.projeto.ProjetoStatusUpdateDTO;

@@ -1,7 +1,5 @@
 package com.portfolio.model;
 
-import jakarta.persistence.Embeddable;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -9,7 +7,6 @@ public class MembroId implements Serializable {
     private Long projeto;
     private Long pessoa;
 
-    // Construtores, equals() e hashCode()
     public MembroId() {}
 
     public MembroId(Long projeto, Long pessoa) {

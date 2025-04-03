@@ -1,6 +1,5 @@
 package com.portfolio.service.impl;
 
-import com.portfolio.dto.*;
 import com.portfolio.dto.projeto.ProjetoRequestDTO;
 import com.portfolio.dto.projeto.ProjetoResponseDTO;
 import com.portfolio.dto.projeto.ProjetoStatusUpdateDTO;
@@ -32,7 +31,7 @@ public class ProjetoServiceImpl implements ProjetoService {
         validarNovoProjeto(projetoDTO);
 
         ProjetoEntity projeto = projetoDTO.toEntity();
-        projeto.setGerente(buscarPessoaValida(projetoDTO.getIdGerente(), true));
+        projeto.setGerente(buscarPessoaValida(projetoDTO.getIdGerente()));
         projeto.setStatus(StatusProjeto.valueOf("EM_ANALISE"));
 
         ProjetoEntity projetoSalvo = projetoRepository.save(projeto);
@@ -55,7 +54,7 @@ public class ProjetoServiceImpl implements ProjetoService {
         projeto.setRisco(RiscoProjeto.valueOf(projetoDTO.getRisco()));
 
         if (!projeto.getGerente().getId().equals(projetoDTO.getIdGerente())) {
-            projeto.setGerente(buscarPessoaValida(projetoDTO.getIdGerente(), true));
+            projeto.setGerente(buscarPessoaValida(projetoDTO.getIdGerente()));
         }
 
         return ProjetoResponseDTO.fromEntity(projetoRepository.save(projeto));
@@ -125,11 +124,11 @@ public class ProjetoServiceImpl implements ProjetoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Projeto não encontrado"));
     }
 
-    private PessoaEntity buscarPessoaValida(Long id, boolean deveSerGerente) {
+    private PessoaEntity buscarPessoaValida(Long id) {
         PessoaEntity pessoa = pessoaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pessoa não encontrada"));
 
-        if (deveSerGerente && !pessoa.isGerente()) {
+        if (!pessoa.isGerente()) {
             throw new ValidacaoException("A pessoa deve ter cargo de gerente");
         }
 
