@@ -1,0 +1,163 @@
+/* style.css - Paleta de cores do VS Code */
+:root {
+    /* Cores base do tema Dark do VS Code */
+    --vscode-background: #1e1e1e;
+    --vscode-sidebar: #252526;
+    --vscode-main: #1e1e1e;
+    --vscode-card: #2d2d2d;
+    --vscode-card-header: #252526;
+    --vscode-border: #3c3c3c;
+    --vscode-text: #d4d4d4;
+    --vscode-blue: #569cd6;
+    --vscode-light-blue: #9cdcfe;
+    --vscode-green: #608b4e;
+    --vscode-light-green: #b5cea8;
+    --vscode-yellow: #dcdcaa;
+    --vscode-orange: #ce9178;
+    --vscode-red: #f44747;
+    --vscode-purple: #c586c0;
+    --vscode-gray: #858585;
+    --vscode-selection: #264f78;
+}
+
+/* Estilos gerais */
+body {
+    font-family: 'Consolas', monospace;
+    background-color: var(--vscode-background);
+    color: var(--vscode-text);
+}
+
+/* Sidebar estilizada */
+.bg-vscode-sidebar {
+    background-color: var(--vscode-sidebar) !important;
+}
+
+/* Área principal */
+.bg-vscode-main {
+    background-color: var(--vscode-main) !important;
+}
+
+/* Cards de projetos */
+.bg-vscode-card {
+    background-color: var(--vscode-card) !important;
+    border: 1px solid var(--vscode-border);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.bg-vscode-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bg-vscode-card-header {
+    background-color: var(--vscode-card-header) !important;
+    border-bottom: 1px solid var(--vscode-border) !important;
+}
+
+/* Bordas */
+.border-vscode-border {
+    border-color: var(--vscode-border) !important;
+}
+
+/* Textos */
+.text-vscode-blue {
+    color: var(--vscode-blue) !important;
+}
+
+.text-vscode-text {
+    color: var(--vscode-text) !important;
+}
+
+/* Botões */
+.btn-outline-vscode-blue {
+    color: var(--vscode-blue);
+    border-color: var(--vscode-blue);
+}
+
+.btn-outline-vscode-blue:hover {
+    color: #fff;
+    background-color: var(--vscode-blue);
+    border-color: var(--vscode-blue);
+}
+
+.btn-vscode-blue {
+    color: #fff;
+    background-color: var(--vscode-blue);
+    border-color: var(--vscode-blue);
+}
+
+.btn-vscode-blue:hover {
+    background-color: #3a8fd4;
+    border-color: #3a8fd4;
+}
+
+.btn-vscode-secondary {
+    color: var(--vscode-text);
+    background-color: var(--vscode-card);
+    border-color: var(--vscode-border);
+}
+
+/* Badges */
+.bg-vscode-blue {
+    background-color: var(--vscode-blue) !important;
+    color: white !important;
+}
+
+.bg-vscode-green {
+    background-color: var(--vscode-green) !important;
+    color: white !important;
+}
+
+.bg-vscode-gray {
+    background-color: var(--vscode-gray) !important;
+    color: white !important;
+}
+
+/* Links e navegação */
+.nav-link {
+    color: var(--vscode-text);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--vscode-blue);
+    background-color: var(--vscode-selection);
+}
+
+/* Modal customizado */
+.modal-content {
+    background-color: var(--vscode-card);
+    color: var(--vscode-text);
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Efeito para os cards de projeto */
+.project-card {
+    transition: all 0.3s ease;
+}
+
+.project-card:hover {
+    border: 1px solid var(--vscode-blue);
+}
+
+/* Barra de rolagem personalizada (opcional) */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--vscode-sidebar);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--vscode-gray);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--vscode-blue);
+}
