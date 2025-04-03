@@ -5,11 +5,4 @@ public class InvalidMemberRoleException extends RuntimeException {
         super(message);
     }
 
-    public InvalidMemberRoleException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public InvalidMemberRoleException(Throwable cause) {
-        super(cause);
-    }
 }
