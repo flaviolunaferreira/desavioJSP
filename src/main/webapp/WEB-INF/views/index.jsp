@@ -1,124 +1,229 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Projetos</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<%@ include file="/WEB-INF/views/partials/header.jsp" %>
 
-    <!-- Ícones Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
-    <!-- CSS Customizado -->
-    <link href="${pageContext.request.contextPath}/resources/css/style.css" rel="stylesheet">
-
-    <!-- Fonte do VS Code -->
-    <link href="https://fonts.googleapis.com/css2?family=Consolas&display=swap" rel="stylesheet">
-</head>
-<body class="bg-dark text-light">
 <div class="container-fluid">
     <div class="row min-vh-100">
-        <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 bg-vscode-sidebar p-0">
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-3">
-                <a href="${pageContext.request.contextPath}/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline text-vscode-blue">
-                            <i class="bi bi-code-square"></i> Gestão de Projetos
-                        </span>
-                </a>
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
-                    <li class="nav-item w-100">
-                        <a href="${pageContext.request.contextPath}/" class="nav-link px-0 align-middle active">
-                            <i class="bi bi-kanban-fill"></i> <span class="ms-1 d-none d-sm-inline">Projetos</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a href="#" class="nav-link px-0 align-middle" data-bs-toggle="modal" data-bs-target="#crudModal" data-type="projeto" data-action="criar">
-                            <i class="bi bi-plus-circle"></i> <span class="ms-1 d-none d-sm-inline">Novo Projeto</span>
-                        </a>
-                    </li>
-                    <li class="nav-item w-100">
-                        <a href="#" class="nav-link px-0 align-middle" data-bs-toggle="modal" data-bs-target="#crudModal" data-type="pessoa" data-action="criar">
-                            <i class="bi bi-person-plus"></i> <span class="ms-1 d-none d-sm-inline">Nova Pessoa</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <%@ include file="/WEB-INF/views/partials/sidebar.jsp" %>
 
-        <!-- Conteúdo Principal -->
         <main class="col-md-9 col-lg-10 px-md-4 py-3 bg-vscode-main">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
-                <h1 class="h2"><i class="bi bi-kanban"></i> Projetos</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group me-2">
-                        <button type="button" class="btn btn-sm btn-outline-vscode-blue" data-bs-toggle="modal" data-bs-target="#crudModal" data-type="tarefa" data-action="criar">
-                            <i class="bi bi-plus-lg"></i> Nova Tarefa
-                        </button>
+            <!-- Dashboard -->
+            <div id="dashboard-section" class="section-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
+                    <h1 class="h2"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h5 class="text-center">Status dos Projetos</h5>
+                            <canvas id="projectsStatusChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h5 class="text-center">Distribuição de Riscos</h5>
+                            <canvas id="projectsRiskChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quadro Kanban Resumido -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4><i class="bi bi-kanban"></i> Quadro Kanban (Tarefas Recentes)</h4>
+                            <button type="button" class="btn btn-sm btn-outline-vscode-blue"
+                                    data-bs-toggle="modal" data-bs-target="#crudModal"
+                                    data-type="tarefa" data-action="criar">
+                                <i class="bi bi-plus-lg"></i> Nova Tarefa
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="kanban-column" data-status="PENDENTE">
+                            <h5 class="kanban-title text-center"><i class="bi bi-hourglass"></i> Pendente</h5>
+                            <div id="kanban-pending" class="kanban-tasks-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="kanban-column" data-status="EM_ANDAMENTO">
+                            <h5 class="kanban-title text-center"><i class="bi bi-arrow-repeat"></i> Em Andamento</h5>
+                            <div id="kanban-in-progress" class="kanban-tasks-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="kanban-column" data-status="BLOQUEADA">
+                            <h5 class="kanban-title text-center"><i class="bi bi-exclamation-octagon"></i> Bloqueada</h5>
+                            <div id="kanban-blocked" class="kanban-tasks-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="kanban-column" data-status="CONCLUIDA">
+                            <h5 class="kanban-title text-center"><i class="bi bi-check-circle"></i> Concluída</h5>
+                            <div id="kanban-completed" class="kanban-tasks-container"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Lista de Projetos -->
-            <div class="row">
-                <c:forEach items="${listaProjetos}" var="projeto">
-                    <div class="col-md-4 mb-4">
-                        <div class="card bg-vscode-card project-card" data-id="${projeto.id}">
-                            <div class="card-header bg-vscode-card-header">
-                                <h5 class="card-title mb-0">${projeto.nome}</h5>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text text-vscode-text">${projeto.descricao}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-${projeto.status == 'EM_ANDAMENTO' ? 'vscode-blue' :
-                                                              projeto.status == 'CONCLUIDO' ? 'vscode-green' :
-                                                              'vscode-gray'}">
-                                                ${projeto.status.replace('_', ' ')}
+            <!-- Seção de Projetos -->
+            <div id="projects-section" class="section-content d-none">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
+                    <h1 class="h2"><i class="bi bi-kanban"></i> Projetos</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-sm btn-outline-vscode-blue"
+                                data-bs-toggle="modal" data-bs-target="#crudModal"
+                                data-type="projeto" data-action="criar">
+                            <i class="bi bi-plus-lg"></i> Novo Projeto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Projetos -->
+                <div class="row" id="projects-container">
+                    <c:forEach items="${listaProjetos}" var="projeto">
+                        <div class="col-md-4 mb-4">
+                            <div class="card bg-vscode-card project-card" data-id="${projeto.id}">
+                                <div class="card-header bg-vscode-card-header">
+                                    <h5 class="card-title mb-0">${projeto.nome}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text text-vscode-text">${projeto.descricao}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge ${projeto.status == 'EM_ANDAMENTO' ? 'bg-vscode-blue' :
+                                                      projeto.status == 'CONCLUIDO' ? 'bg-vscode-green' :
+                                                      'bg-vscode-gray'}">
+                                            ${projeto.status.replace('_', ' ')}
                                         </span>
-                                    <a href="${pageContext.request.contextPath}/api/projetos/${projeto.id}"
-                                       class="btn btn-sm btn-outline-vscode-blue">
-                                        <i class="bi bi-arrow-right"></i> Detalhes
-                                    </a>
+                                        <a href="projeto-detalhes.jsp?id=${projeto.id}" class="btn btn-sm btn-outline-vscode-blue">
+                                            <i class="bi bi-arrow-right"></i> Detalhes
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </c:forEach>
+                </div>
+            </div>
+
+            <!-- Seção de Pessoas -->
+            <div id="people-section" class="section-content d-none">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
+                    <h1 class="h2"><i class="bi bi-people-fill"></i> Pessoas</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-sm btn-outline-vscode-blue"
+                                data-bs-toggle="modal" data-bs-target="#crudModal"
+                                data-type="pessoa" data-action="criar">
+                            <i class="bi bi-plus-lg"></i> Nova Pessoa
+                        </button>
                     </div>
-                </c:forEach>
+                </div>
+
+                <!-- Lista de Pessoas -->
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Funcionário</th>
+                                <th>Gerente</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="people-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Seção de Tarefas -->
+            <div id="tasks-section" class="section-content d-none">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
+                    <h1 class="h2"><i class="bi bi-list-task"></i> Tarefas</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-sm btn-outline-vscode-blue"
+                                data-bs-toggle="modal" data-bs-target="#crudModal"
+                                data-type="tarefa" data-action="criar">
+                            <i class="bi bi-plus-lg"></i> Nova Tarefa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <select id="filter-projeto" class="form-select bg-vscode-card text-light">
+                            <option value="">Todos os projetos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="filter-status" class="form-select bg-vscode-card text-light">
+                            <option value="">Todos os status</option>
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="EM_ANDAMENTO">Em Andamento</option>
+                            <option value="BLOQUEADA">Bloqueada</option>
+                            <option value="CONCLUIDA">Concluída</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Lista de Tarefas -->
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Projeto</th>
+                                <th>Responsável</th>
+                                <th>Status</th>
+                                <th>Prazo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Seção de Membros -->
+            <div id="members-section" class="section-content d-none">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
+                    <h1 class="h2"><i class="bi bi-person-plus"></i> Membros</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-sm btn-outline-vscode-blue"
+                                data-bs-toggle="modal" data-bs-target="#crudModal"
+                                data-type="membro" data-action="criar">
+                            <i class="bi bi-plus-lg"></i> Novo Membro
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Membros -->
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Projeto</th>
+                                <th>Pessoa</th>
+                                <th>Função</th>
+                                <th>Data de Entrada</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="members-table-body"></tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
 </div>
 
-<!-- Modal CRUD -->
-<div class="modal fade" id="crudModal" tabindex="-1" aria-labelledby="crudModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-vscode-card">
-            <div class="modal-header border-vscode-border">
-                <h5 class="modal-title text-vscode-blue" id="crudModalLabel"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="crudModalBody">
-                <!-- O conteúdo será carregado dinamicamente via JavaScript -->
-            </div>
-            <div class="modal-footer border-vscode-border">
-                <button type="button" class="btn btn-vscode-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-vscode-blue" id="saveButton">Salvar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap Bundle com Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- JavaScript Customizado -->
-<script src="${pageContext.request.contextPath}/resources/js/app.js"></script>
-</body>
-</html>
+<%@ include file="/WEB-INF/views/partials/modal.jsp" %>
+<%@ include file="/WEB-INF/views/partials/footer.jsp" %>

@@ -161,3 +161,95 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--vscode-blue);
 }
+
+/* Adicione ao final do seu arquivo style.css */
+
+/* Estilos para as seções */
+.section-content {
+    display: block;
+}
+
+/* Estilos para tabelas */
+.table-dark {
+    --bs-table-bg: var(--vscode-card);
+    --bs-table-striped-bg: var(--vscode-card-header);
+    --bs-table-hover-bg: var(--vscode-selection);
+    color: var(--vscode-text);
+    border-color: var(--vscode-border);
+}
+
+/* Estilos para listas */
+.list-group-item {
+    background-color: var(--vscode-card);
+    border-color: var(--vscode-border);
+    color: var(--vscode-text);
+}
+
+/* Estilos para toasts */
+.toast {
+    background-color: var(--vscode-card);
+    border: 1px solid var(--vscode-border);
+}
+
+.toast-header {
+    border-bottom: 1px solid var(--vscode-border);
+}
+
+/* Estilos para progress bars */
+.progress {
+    background-color: var(--vscode-card-header);
+}
+
+.progress-bar {
+    background-color: var(--vscode-blue);
+}
+
+/* Estilos para checkboxes */
+.form-check-input {
+    background-color: var(--vscode-card-header);
+    border-color: var(--vscode-border);
+}
+
+.form-check-input:checked {
+    background-color: var(--vscode-blue);
+    border-color: var(--vscode-blue);
+}
+
+/* Estilos para selects */
+.form-select {
+    background-color: var(--vscode-card-header);
+    color: var(--vscode-text);
+    border-color: var(--vscode-border);
+}
+
+.form-select:focus {
+    border-color: var(--vscode-blue);
+    box-shadow: 0 0 0 0.25rem rgba(86, 156, 214, 0.25);
+}
+
+/* Estilos para inputs */
+.form-control {
+    background-color: var(--vscode-card-header);
+    color: var(--vscode-text);
+    border-color: var(--vscode-border);
+}
+
+.form-control:focus {
+    background-color: var(--vscode-card-header);
+    color: var(--vscode-text);
+    border-color: var(--vscode-blue);
+    box-shadow: 0 0 0 0.25rem rgba(86, 156, 214, 0.25);
+}
+
+/* Validação de formulário */
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    border-color: var(--vscode-green);
+    background-image: none;
+}
+
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: var(--vscode-red);
+    background-image: none;
+}
