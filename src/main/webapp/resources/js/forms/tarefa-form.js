@@ -1,88 +1,125 @@
 class TarefaForm extends FormBuilder {
-    static getFieldsConfig(action, projetoId = null) {
-        const baseFields = [];
+    static statusOptions = [
+        { value: 'PENDENTE', label: 'Pendente' },
+        { value: 'EM_ANDAMENTO', label: 'Em Andamento' },
+        { value: 'BLOQUEADA', label: 'Bloqueada' },
+        { value: 'CONCLUIDA', label: 'Concluída' },
+        { value: 'CANCELADA', label: 'Cancelada' }
+    ];
 
-        if (!projetoId) {
-            baseFields.push({
-                id: 'projetoId',
-                type: 'select',
-                label: 'Projeto',
-                required: true,
-                options: []
-            });
+    static async getForm(data, action, options) {
+        const fields = [
+            `<input type="hidden" name="id" value="${data?.id || ''}">`
+        ];
+
+        // Campo de projeto (se não estiver definido nas opções)
+        if (!options.projetoId) {
+            fields.push(await this.createProjetoField(data?.projeto?.id));
         } else {
-            baseFields.push(`<input type="hidden" id="projetoId" name="projetoId" value="${projetoId}">`);
+            fields.push(`<input type="hidden" name="projetoId" value="${options.projetoId}">`);
         }
 
-        baseFields.push(
-            {
-                id: 'titulo',
+        fields.push(
+            this.createField({
                 type: 'text',
+                name: 'titulo',
                 label: 'Título',
                 required: true
-            },
-            {
-                id: 'descricao',
+            }, data?.titulo),
+            this.createField({
                 type: 'textarea',
+                name: 'descricao',
                 label: 'Descrição'
-            },
-            {
-                id: 'responsavelId',
-                type: 'select',
-                label: 'Responsável',
-                options: []
-            },
-            {
-                id: 'dataLimite',
+            }, data?.descricao),
+            await this.createResponsavelField(data?.responsavel?.id, options.projetoId),
+            this.createField({
                 type: 'datetime-local',
+                name: 'dataLimite',
                 label: 'Data Limite'
-            }
+            }, data?.dataLimite ? new Date(data.dataLimite).toISOString().slice(0, 16) : '')
         );
 
         if (action === 'editar') {
-            baseFields.push({
-                id: 'status',
-                type: 'select',
-                label: 'Status',
-                options: [
-                    { value: 'PENDENTE', label: 'Pendente' },
-                    { value: 'EM_ANDAMENTO', label: 'Em Andamento' },
-                    { value: 'BLOQUEADA', label: 'Bloqueada' },
-                    { value: 'CONCLUIDA', label: 'Concluída' },
-                    { value: 'CANCELADA', label: 'Cancelada' }
-                ]
-            });
+            fields.push(
+                this.createField({
+                    type: 'select',
+                    name: 'status',
+                    label: 'Status',
+                    options: this.statusOptions
+                }, data?.status)
+            );
         }
 
-        return baseFields;
+        return this.buildForm(fields, 'tarefaForm');
     }
 
-    static getForm(data, action, options = {}) {
-        const fieldsConfig = this.getFieldsConfig(action, options.projetoId);
-        let fieldsHtml = '<input type="hidden" id="id" name="id">';
+    static async createProjetoField(selectedValue) {
+        try {
+            const projetos = await ProjetoApi.list();
+            const options = projetos.map(p => ({
+                value: p.id,
+                label: p.nome
+            }));
 
-        for (const field of fieldsConfig) {
-            if (typeof field === 'string') {
-                fieldsHtml += field;
-                continue;
-            }
-
-            let value = data ? data[field.id] : '';
-
-            // Tratamento especial para relacionamentos
-            if (field.id === 'responsavelId' && data?.responsavel) {
-                value = data.responsavel.id;
-            }
-
-            // Formatação de data para datetime-local
-            if (field.id === 'dataLimite' && value) {
-                const date = new Date(value);
-                value = date.toISOString().slice(0, 16);
-            }
-
-            fieldsHtml += this.createFormField(field, value);
+            return this.createField({
+                type: 'select',
+                name: 'projetoId',
+                label: 'Projeto',
+                required: true,
+                options: [
+                    { value: '', label: 'Selecione um projeto' },
+                    ...options
+                ]
+            }, selectedValue);
+        } catch (error) {
+            console.error('Erro ao carregar projetos:', error);
+            return this.createField({
+                type: 'select',
+                name: 'projetoId',
+                label: 'Projeto',
+                required: true,
+                options: [
+                    { value: '', label: 'Erro ao carregar projetos' }
+                ]
+            }, selectedValue);
         }
+    }
 
-        return this.buildFormContainer(fieldsHtml, 'tarefaForm');
+    static async createResponsavelField(selectedValue, projetoId) {
+        try {
+            let pessoas = [];
+
+            if (projetoId) {
+                const membros = await MembroApi.listByProjeto(projetoId);
+                pessoas = membros.map(m => m.pessoa);
+            } else {
+                pessoas = await PessoaApi.listFuncionarios();
+            }
+
+            const options = pessoas.map(p => ({
+                value: p.id,
+                label: p.nome
+            }));
+
+            return this.createField({
+                type: 'select',
+                name: 'responsavel.id',
+                label: 'Responsável',
+                options: [
+                    { value: '', label: 'Selecione um responsável' },
+                    ...options
+                ]
+            }, selectedValue);
+        } catch (error) {
+            console.error('Erro ao carregar responsáveis:', error);
+            return this.createField({
+                type: 'select',
+                name: 'responsavel.id',
+                label: 'Responsável',
+                options: [
+                    { value: '', label: 'Erro ao carregar responsáveis' }
+                ]
+            }, selectedValue);
+        }
     }
 }

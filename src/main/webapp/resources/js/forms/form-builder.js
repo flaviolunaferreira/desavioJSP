@@ -2,35 +2,25 @@
  * Classe base para construção de formulários
  */
 class FormBuilder {
-    constructor() {
-        if (new.target === FormBuilder) {
-            throw new Error("FormBuilder é uma classe abstrata e não pode ser instanciada diretamente.");
-        }
-    }
-
-    /**
-     * Método abstrato para obter a estrutura do formulário
-     */
     static getForm(data, action, options = {}) {
         throw new Error("Método getForm deve ser implementado pelas classes filhas");
     }
 
-    /**
-     * Cria um campo de formulário baseado na configuração
-     */
-    static createFormField(fieldConfig, value = '') {
-        const { type, id, label, required, options, ...attrs } = fieldConfig;
+    static createField(fieldConfig, value = '') {
+        const { type, name, label, required, options, ...attrs } = fieldConfig;
+        const fieldId = `${name}Field`;
+        const isCheckbox = type === 'checkbox';
 
         let fieldHtml = '';
-        const commonAttrs = `id="${id}" name="${id}" ${required ? 'required' : ''} 
-                           class="form-control bg-vscode-card text-light" 
-                           ${attrs.disabled ? 'disabled' : ''}`;
+        const commonAttrs = `id="${fieldId}" name="${name}" ${required ? 'required' : ''} 
+                           class="form-control ${isCheckbox ? 'form-check-input' : ''}"`;
 
         switch(type) {
             case 'text':
             case 'number':
             case 'date':
             case 'datetime-local':
+            case 'email':
                 fieldHtml = `<input type="${type}" ${commonAttrs} value="${value || ''}">`;
                 break;
 
@@ -48,29 +38,35 @@ class FormBuilder {
                 break;
 
             case 'checkbox':
-                fieldHtml = `<input type="checkbox" id="${id}" name="${id}" 
-                                  class="form-check-input" ${value ? 'checked' : ''}>`;
+                fieldHtml = `<input type="checkbox" ${commonAttrs} ${value ? 'checked' : ''}>`;
                 break;
 
             default:
                 throw new Error(`Tipo de campo não suportado: ${type}`);
         }
 
+        // Estrutura diferente para checkboxes
+        if (isCheckbox) {
+            return `
+                <div class="form-check mb-3">
+                    ${fieldHtml}
+                    <label class="form-check-label" for="${fieldId}">${label}</label>
+                </div>
+            `;
+        }
+
         return `
             <div class="mb-3">
-                <label for="${id}" class="form-label">${label}${required ? ' *' : ''}</label>
+                <label for="${fieldId}" class="form-label">${label}${required ? ' *' : ''}</label>
                 ${fieldHtml}
             </div>
         `;
     }
 
-    /**
-     * Cria o container do formulário com campos e botão de erro
-     */
-    static buildFormContainer(fieldsHtml, formId) {
+    static buildForm(fields, formId) {
         return `
             <form id="${formId}">
-                ${fieldsHtml}
+                ${fields.join('')}
                 <div class="alert alert-danger d-none" id="formError"></div>
             </form>
         `;

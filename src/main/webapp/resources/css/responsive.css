@@ -1,0 +1,29 @@
+/* Telas pequenas (mobile) */
+@media (max-width: 768px) {
+    .kanban-column {
+        margin-bottom: 20px;
+    }
+
+    .bg-vscode-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .nav-pills {
+        flex-direction: row !important;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .nav-pills .nav-link {
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Telas médias (tablet) */
+@media (min-width: 769px) and (max-width: 992px) {
+    .kanban-column {
+        min-height: 300px;
+    }
+}

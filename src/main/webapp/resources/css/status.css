@@ -1,0 +1,37 @@
+/* Status de projetos */
+.status-em-andamento {
+    background-color: var(--vscode-blue);
+    color: white;
+}
+
+.status-concluido {
+    background-color: var(--vscode-green);
+    color: white;
+}
+
+.status-cancelado {
+    background-color: var(--vscode-red);
+    color: white;
+}
+
+.status-pendente {
+    background-color: var(--vscode-gray);
+    color: white;
+}
+
+/* Status de tarefas */
+.task-pendente {
+    border-left: 4px solid var(--vscode-gray);
+}
+
+.task-em-andamento {
+    border-left: 4px solid var(--vscode-blue);
+}
+
+.task-bloqueada {
+    border-left: 4px solid var(--vscode-red);
+}
+
+.task-concluida {
+    border-left: 4px solid var(--vscode-green);
+}

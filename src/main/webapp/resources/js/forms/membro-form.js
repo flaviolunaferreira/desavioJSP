@@ -1,63 +1,101 @@
 class MembroForm extends FormBuilder {
-    static getFieldsConfig(projetoId = null) {
+    static async getForm(data, action, options) {
         const fields = [];
 
-        if (!projetoId) {
-            fields.push({
-                id: 'membro-projeto',
-                type: 'select',
-                label: 'Projeto',
-                required: true,
-                options: []
-            });
+        // Campo de projeto (se não estiver definido nas opções)
+        if (!options.projetoId) {
+            fields.push(await this.createProjetoField(data?.projeto?.id));
         } else {
-            fields.push(`<input type="hidden" id="membroProjetoId" name="projeto" value="${projetoId}">`);
+            fields.push(`<input type="hidden" name="projeto" value="${options.projetoId}">`);
         }
 
         fields.push(
-            {
-                id: 'membro-pessoa',
-                type: 'select',
-                label: 'Pessoa',
-                required: true,
-                options: []
-            },
-            {
-                id: 'funcao',
+            await this.createPessoaField(data?.pessoa?.id, options.projetoId),
+            this.createField({
                 type: 'text',
+                name: 'funcao',
                 label: 'Função'
-            },
-            {
-                id: 'dataEntrada',
+            }, data?.funcao),
+            this.createField({
                 type: 'date',
+                name: 'dataEntrada',
                 label: 'Data de Entrada',
                 required: true
-            }
+            }, data?.dataEntrada ? new Date(data.dataEntrada).toISOString().split('T')[0] : '')
         );
 
-        return fields;
+        return this.buildForm(fields, 'membroForm');
     }
 
-    static getForm(data, action, options = {}) {
-        const fieldsConfig = this.getFieldsConfig(options.projetoId);
-        let fieldsHtml = '';
+    static async createProjetoField(selectedValue) {
+        try {
+            const projetos = await ProjetoApi.list();
+            const options = projetos.map(p => ({
+                value: p.id,
+                label: p.nome
+            }));
 
-        for (const field of fieldsConfig) {
-            if (typeof field === 'string') {
-                fieldsHtml += field;
-                continue;
-            }
-
-            let value = data ? data[field.id.replace('membro-', '')] : '';
-
-            // Tratamento especial para relacionamentos
-            if (field.id === 'membro-pessoa' && data?.pessoa) {
-                value = data.pessoa.id;
-            }
-
-            fieldsHtml += this.createFormField(field, value);
+            return this.createField({
+                type: 'select',
+                name: 'projeto',
+                label: 'Projeto',
+                required: true,
+                options: [
+                    { value: '', label: 'Selecione um projeto' },
+                    ...options
+                ]
+            }, selectedValue);
+        } catch (error) {
+            console.error('Erro ao carregar projetos:', error);
+            return this.createField({
+                type: 'select',
+                name: 'projeto',
+                label: 'Projeto',
+                required: true,
+                options: [
+                    { value: '', label: 'Erro ao carregar projetos' }
+                ]
+            }, selectedValue);
         }
+    }
 
-        return this.buildFormContainer(fieldsHtml, 'membroForm');
+    static async createPessoaField(selectedValue, projetoId) {
+        try {
+            let pessoas = await PessoaApi.list();
+
+            // Se tiver projetoId, remove pessoas que já são membros
+            if (projetoId) {
+                const membros = await MembroApi.listByProjeto(projetoId);
+                const membrosIds = membros.map(m => m.pessoa.id);
+                pessoas = pessoas.filter(p => !membrosIds.includes(p.id));
+            }
+
+            const options = pessoas.map(p => ({
+                value: p.id,
+                label: p.nome
+            }));
+
+            return this.createField({
+                type: 'select',
+                name: 'pessoa',
+                label: 'Pessoa',
+                required: true,
+                options: [
+                    { value: '', label: 'Selecione uma pessoa' },
+                    ...options
+                ]
+            }, selectedValue);
+        } catch (error) {
+            console.error('Erro ao carregar pessoas:', error);
+            return this.createField({
+                type: 'select',
+                name: 'pessoa',
+                label: 'Pessoa',
+                required: true,
+                options: [
+                    { value: '', label: 'Erro ao carregar pessoas' }
+                ]
+            }, selectedValue);
+        }
     }
 }

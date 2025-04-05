@@ -1,42 +1,10 @@
+
+
 class Ui {
-    static showSuccess(message, duration = 3000) {
-        const toast = $(`
-            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header bg-vscode-green text-white">
-                        <strong class="me-auto">Sucesso</strong>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body bg-vscode-card">
-                        ${message}
-                    </div>
-                </div>
-            </div>
-        `);
-
-        $('body').append(toast);
-        setTimeout(() => toast.remove(), duration);
-    }
-
-    static showError(message, duration = 5000) {
-        const toast = $(`
-            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header bg-vscode-red text-white">
-                        <strong class="me-auto">Erro</strong>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body bg-vscode-card">
-                        ${message}
-                    </div>
-                </div>
-            </div>
-        `);
-
-        $('body').append(toast);
-        setTimeout(() => toast.remove(), duration);
-    }
-
+    /**
+     * Mostra um indicador de carregamento
+     * @param {boolean} show - Se true, mostra o loading. Se false, esconde.
+     */
     static showLoading(show = true) {
         const loader = $('#loading-overlay');
         if (show) {
@@ -48,46 +16,87 @@ class Ui {
                         </div>
                     </div>
                 `);
+            } else {
+                loader.removeClass('d-none');
             }
         } else {
-            loader.remove();
+            loader.addClass('d-none');
         }
     }
 
-    static getStatusColorClass(status) {
-        switch(status) {
-            case 'EM_ANDAMENTO': return 'bg-vscode-blue';
-            case 'CONCLUIDA':
-            case 'CONCLUIDO':
-            case 'ENCERRADO': return 'bg-vscode-green';
-            case 'BLOQUEADA':
-            case 'CANCELADO': return 'bg-vscode-red';
-            default: return 'bg-vscode-gray';
-        }
+    /**
+     * Mostra uma mensagem de sucesso
+     * @param {string} message - Mensagem a ser exibida
+     * @param {number} duration - Duração em milissegundos (padrão: 3000)
+     */
+    static showSuccess(message, duration = 3000) {
+        this.showToast('Sucesso', message, 'bg-vscode-green', duration);
     }
 
-    static getRiskColorClass(risco) {
-        switch(risco) {
-            case 'ALTO': return 'bg-vscode-red';
-            case 'MEDIO': return 'bg-vscode-yellow';
-            case 'BAIXO': return 'bg-vscode-green';
-            default: return 'bg-vscode-gray';
-        }
+    /**
+     * Mostra uma mensagem de erro
+     * @param {string} message - Mensagem a ser exibida
+     * @param {number} duration - Duração em milissegundos (padrão: 5000)
+     */
+    static showError(message, duration = 5000) {
+        this.showToast('Erro', message, 'bg-vscode-red', duration);
     }
 
-    static formatDate(dateString) {
-        if (!dateString) return 'N/A';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR');
+    /**
+     * Mostra um toast de notificação
+     * @private
+     */
+    static showToast(title, message, bgClass, duration) {
+        // Remove toasts existentes
+        $('.ui-toast').remove();
+
+        const toastId = 'toast-' + Date.now();
+        const toast = $(`
+        <div class="ui-toast position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header ${bgClass} text-white">
+                    <strong class="me-auto">${title}</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body bg-light">
+                    ${message}
+                </div>
+            </div>
+        </div>
+    `);
+
+        $('body').append(toast);
+
+        // Inicializa o toast manualmente
+        const toastElement = document.getElementById(toastId);
+        const bsToast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: duration
+        });
+
+        bsToast.show();
+
+        // Remove o elemento do DOM após esconder
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+
+        // Configura o fechamento automático
+        setTimeout(() => {
+            toast.find('.toast').toast('hide');
+            setTimeout(() => toast.remove(), 500);
+        }, duration);
     }
 
-    static formatDateTime(dateString) {
-        if (!dateString) return 'N/A';
-        const date = new Date(dateString);
-        return date.toLocaleString('pt-BR');
-    }
-
+    /**
+     * Mostra um diálogo de confirmação
+     * @param {string} message - Mensagem de confirmação
+     * @param {function} callback - Função a ser executada quando confirmado
+     */
     static confirm(message, callback) {
+        // Remove modais de confirmação existentes
+        $('#confirmModal').remove();
+
         const modal = $(`
             <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog">
@@ -109,10 +118,11 @@ class Ui {
         `);
 
         $('body').append(modal);
-        const bsModal = new bootstrap.Modal(modal[0]);
+
+        const bsModal = new bootstrap.Modal(document.getElementById('confirmModal'));
         bsModal.show();
 
-        modal.find('#confirmButton').click(() => {
+        $('#confirmButton').off('click').on('click', () => {
             callback();
             bsModal.hide();
         });
@@ -120,5 +130,36 @@ class Ui {
         modal.on('hidden.bs.modal', () => {
             modal.remove();
         });
+    }
+
+    /**
+     * Obtém a classe CSS para um status
+     * @param {string} status - Status do item
+     * @return {string} Classe CSS correspondente
+     */
+    static getStatusColorClass(status) {
+        switch(status) {
+            case 'EM_ANDAMENTO': return 'bg-vscode-blue';
+            case 'CONCLUIDA':
+            case 'CONCLUIDO':
+            case 'ENCERRADO': return 'bg-vscode-green';
+            case 'BLOQUEADA':
+            case 'CANCELADO': return 'bg-vscode-red';
+            default: return 'bg-vscode-gray';
+        }
+    }
+
+    /**
+     * Obtém a classe CSS para um nível de risco
+     * @param {string} risco - Nível de risco
+     * @return {string} Classe CSS correspondente
+     */
+    static getRiskColorClass(risco) {
+        switch(risco) {
+            case 'ALTO': return 'bg-vscode-red';
+            case 'MEDIO': return 'bg-vscode-yellow';
+            case 'BAIXO': return 'bg-vscode-green';
+            default: return 'bg-vscode-gray';
+        }
     }
 }

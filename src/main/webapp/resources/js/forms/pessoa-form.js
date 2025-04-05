@@ -1,43 +1,36 @@
 class PessoaForm extends FormBuilder {
-    static getFieldsConfig() {
-        return [
-            {
-                id: 'nome',
+    static async getForm(data, action, options) {
+        const fields = [
+            `<input type="hidden" name="id" value="${data?.id || ''}">`,
+            this.createField({
                 type: 'text',
+                name: 'nome',
                 label: 'Nome',
                 required: true
-            },
-            {
-                id: 'dataNascimento',
+            }, data?.nome),
+            this.createField({
                 type: 'date',
+                name: 'dataNascimento',
                 label: 'Data de Nascimento'
-            },
-            {
-                id: 'cpf',
+            }, data?.dataNascimento ? new Date(data.dataNascimento).toISOString().split('T')[0] : ''),
+            this.createField({
                 type: 'text',
-                label: 'CPF'
-            },
-            {
-                id: 'funcionario',
+                name: 'cpf',
+                label: 'CPF',
+                placeholder: '000.000.000-00'
+            }, data?.cpf),
+            this.createField({
                 type: 'checkbox',
+                name: 'funcionario',
                 label: 'Funcionário'
-            },
-            {
-                id: 'gerente',
+            }, data?.funcionario),
+            this.createField({
                 type: 'checkbox',
+                name: 'gerente',
                 label: 'Gerente'
-            }
+            }, data?.gerente)
         ];
-    }
 
-    static getForm(data, action) {
-        const fieldsConfig = this.getFieldsConfig();
-        let fieldsHtml = '<input type="hidden" id="id" name="id">';
-
-        for (const field of fieldsConfig) {
-            fieldsHtml += this.createFormField(field, data ? data[field.id] : '');
-        }
-
-        return this.buildFormContainer(fieldsHtml, 'pessoaForm');
+        return this.buildForm(fields, 'pessoaForm');
     }
 }

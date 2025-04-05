@@ -1,0 +1,41 @@
+/* Formulários e inputs */
+.form-control, .form-select {
+    background-color: #2d2d2d;
+    color: var(--vscode-foreground);
+    border: 1px solid var(--vscode-border);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #2d2d2d;
+    color: var(--vscode-foreground);
+    border-color: var(--vscode-blue);
+    box-shadow: 0 0 0 0.25rem rgba(0, 122, 204, 0.25);
+}
+
+.form-check-input {
+    background-color: #2d2d2d;
+    border: 1px solid var(--vscode-border);
+}
+
+.form-check-input:checked {
+    background-color: var(--vscode-blue);
+    border-color: var(--vscode-blue);
+}
+
+.form-label {
+    color: var(--vscode-foreground);
+}
+
+/* Modal */
+.modal-content {
+    background-color: #2d2d2d;
+    border: 1px solid var(--vscode-border);
+}
+
+.modal-header, .modal-footer {
+    border-color: var(--vscode-border);
+}
+
+.btn-close {
+    filter: invert(1);
+}

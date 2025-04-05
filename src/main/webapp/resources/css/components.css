@@ -1,0 +1,59 @@
+/* Cards */
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.task-card {
+    cursor: grab;
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+/* Kanban */
+.kanban-column {
+    background-color: #252526;
+    border-radius: 4px;
+    padding: 10px;
+    min-height: 400px;
+}
+
+.kanban-title {
+    padding: 8px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--vscode-border);
+}
+
+.kanban-tasks-container {
+    min-height: 300px;
+}
+
+/* Progress bar */
+.progress {
+    background-color: #252526;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Tabelas */
+.table {
+    color: var(--vscode-foreground);
+}
+
+.table-hover tbody tr:hover {
+    background-color: #2a2d2e;
+}
+
+/* Badges */
+.badge {
+    font-weight: normal;
+    padding: 5px 8px;
+}

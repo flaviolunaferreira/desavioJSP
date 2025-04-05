@@ -30,58 +30,44 @@ public class ProjetoController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar novo projeto",
-            description = "Registra um novo projeto no portfólio",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Projeto criado com sucesso",
-                            content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class))),
+    @Operation(summary = "Criar novo projeto", description = "Registra um novo projeto no portfólio", responses = {
+                    @ApiResponse(responseCode = "201", description = "Projeto criado com sucesso", content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
                     @ApiResponse(responseCode = "409", description = "Conflito (nome já existe)")})
-    public ResponseEntity<ProjetoResponseDTO> criarProjeto(
-            @Parameter(description = "Dados do projeto a ser criado", required = true)
-            @RequestBody @Valid ProjetoRequestDTO request) {
+    public ResponseEntity<ProjetoResponseDTO> criarProjeto( @Parameter(description = "Dados do projeto a ser criado", required = true)
+                                                            @RequestBody @Valid ProjetoRequestDTO request) {
         ProjetoResponseDTO response = projetoService.criarProjeto(request);
         return ResponseEntity.created(buildUri(response)).body(response);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar projeto por ID",
-            description = "Recupera os detalhes de um projeto específico",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Projeto encontrado",
-                            content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class))),
+    @Operation(summary = "Buscar projeto por ID", description = "Recupera os detalhes de um projeto específico", responses = {
+                    @ApiResponse(responseCode = "200", description = "Projeto encontrado", content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class))),
                     @ApiResponse(responseCode = "404", description = "Projeto não encontrado")})
-    public ResponseEntity<ProjetoResponseDTO> buscarPorId(
-            @Parameter(description = "ID do projeto a ser buscado", required = true, example = "1")
-            @PathVariable Long id) {
+    public ResponseEntity<ProjetoResponseDTO> buscarPorId(  @Parameter(description = "ID do projeto a ser buscado", required = true, example = "1")
+                                                            @PathVariable Long id) {
         return ResponseEntity.ok(projetoService.buscarProjetoPorId(id));
     }
 
     @GetMapping
-    @Operation(summary = "Listar todos os projetos",
-            description = "Recupera todos os projetos do portfólio",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de projetos retornada",
-                            content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class)))
+    @Operation(summary = "Listar todos os projetos", description = "Recupera todos os projetos do portfólio", responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de projetos retornada", content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class)))
             })
     public ResponseEntity<List<ProjetoResponseDTO>> listarTodos() {
         return ResponseEntity.ok(projetoService.listarTodosProjetos());
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar projeto",
-            description = "Atualiza todos os dados de um projeto existente",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Projeto atualizado",
-                            content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class))),
+    @Operation(summary = "Atualizar projeto", description = "Atualiza todos os dados de um projeto existente", responses = {
+                    @ApiResponse(responseCode = "200", description = "Projeto atualizado", content = @Content(schema = @Schema(implementation = ProjetoResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Dados inválidos"),
                     @ApiResponse(responseCode = "404", description = "Projeto não encontrado"),
                     @ApiResponse(responseCode = "409", description = "Conflito (nome já existe")})
     public ResponseEntity<ProjetoResponseDTO> atualizarProjeto(
-            @Parameter(description = "ID do projeto a ser atualizado", required = true, example = "1")
-            @PathVariable Long id,
-            @Parameter(description = "Dados atualizados do projeto", required = true)
-            @RequestBody @Valid ProjetoRequestDTO request) {
+                    @Parameter(description = "ID do projeto a ser atualizado", required = true, example = "1")
+                    @PathVariable Long id,
+                    @Parameter(description = "Dados atualizados do projeto", required = true)
+                    @RequestBody @Valid ProjetoRequestDTO request) {
         return ResponseEntity.ok(projetoService.atualizarProjeto(id, request));
     }
 

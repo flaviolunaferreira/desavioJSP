@@ -1,0 +1,41 @@
+/* Layout principal */
+.container-fluid {
+    padding: 0;
+}
+
+.bg-vscode-main {
+    background-color: var(--vscode-background);
+    min-height: 100vh;
+}
+
+.bg-vscode-sidebar {
+    background-color: #252526;
+    border-right: 1px solid var(--vscode-border);
+}
+
+.bg-vscode-card {
+    background-color: #2d2d2d;
+    border: 1px solid var(--vscode-border);
+    border-radius: 4px;
+}
+
+.bg-vscode-card-header {
+    background-color: #252526;
+    border-bottom: 1px solid var(--vscode-border);
+}
+
+/* Barra de navegação lateral */
+.nav-pills .nav-link {
+    color: var(--vscode-foreground);
+    border-radius: 0;
+    margin-bottom: 2px;
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--vscode-selection);
+    color: white;
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+    background-color: #2a2d2e;
+}

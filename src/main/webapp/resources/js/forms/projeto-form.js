@@ -1,94 +1,106 @@
 class ProjetoForm extends FormBuilder {
-    static getFieldsConfig(action) {
-        const baseFields = [
-            {
-                id: 'nome',
+    static statusOptions = [
+        { value: 'EM_ANALISE', label: 'Em Análise' },
+        { value: 'ANALISE_REALIZADA', label: 'Análise Realizada' },
+        { value: 'ANALISE_APROVADA', label: 'Análise Aprovada' },
+        { value: 'INICIADO', label: 'Iniciado' },
+        { value: 'PLANEJADO', label: 'Planejado' },
+        { value: 'EM_ANDAMENTO', label: 'Em Andamento' },
+        { value: 'ENCERRADO', label: 'Encerrado' },
+        { value: 'CANCELADO', label: 'Cancelado' }
+    ];
+
+    static riscoOptions = [
+        { value: 'BAIXO', label: 'Baixo' },
+        { value: 'MEDIO', label: 'Médio' },
+        { value: 'ALTO', label: 'Alto' }
+    ];
+
+    static async getForm(data, action, options) {
+        const fields = [
+            `<input type="hidden" name="id" value="${data?.id || ''}">`,
+            this.createField({
                 type: 'text',
+                name: 'nome',
                 label: 'Nome',
                 required: true
-            },
-            {
-                id: 'descricao',
+            }, data?.nome),
+            this.createField({
                 type: 'textarea',
+                name: 'descricao',
                 label: 'Descrição'
-            },
-            {
-                id: 'dataInicio',
+            }, data?.descricao),
+            this.createField({
                 type: 'date',
+                name: 'dataInicio',
                 label: 'Data de Início',
                 required: true
-            },
-            {
-                id: 'dataPrevisaoFim',
+            }, data?.dataInicio ? new Date(data.dataInicio).toISOString().split('T')[0] : ''),
+            this.createField({
                 type: 'date',
+                name: 'dataPrevisaoFim',
                 label: 'Data Prevista de Término',
                 required: true
-            },
-            {
-                id: 'orcamento',
+            }, data?.dataPrevisaoFim ? new Date(data.dataPrevisaoFim).toISOString().split('T')[0] : ''),
+            this.createField({
                 type: 'number',
+                name: 'orcamento',
                 label: 'Orçamento',
                 step: '0.01'
-            },
-            {
-                id: 'gerente',
-                type: 'select',
-                label: 'Gerente',
-                required: true,
-                options: []
-            }
+            }, data?.orcamento),
+            await this.createGerenteField(data?.gerente?.id)
         ];
 
         if (action === 'editar') {
-            baseFields.push(
-                {
-                    id: 'status',
+            fields.push(
+                this.createField({
                     type: 'select',
+                    name: 'status',
                     label: 'Status',
                     required: true,
-                    options: [
-                        { value: 'EM_ANALISE', label: 'Em Análise' },
-                        { value: 'ANALISE_REALIZADA', label: 'Análise Realizada' },
-                        { value: 'ANALISE_APROVADA', label: 'Análise Aprovada' },
-                        { value: 'INICIADO', label: 'Iniciado' },
-                        { value: 'PLANEJADO', label: 'Planejado' },
-                        { value: 'EM_ANDAMENTO', label: 'Em Andamento' },
-                        { value: 'ENCERRADO', label: 'Encerrado' },
-                        { value: 'CANCELADO', label: 'Cancelado' }
-                    ]
-                },
-                {
-                    id: 'risco',
+                    options: this.statusOptions
+                }, data?.status),
+                this.createField({
                     type: 'select',
+                    name: 'risco',
                     label: 'Risco',
-                    options: [
-                        { value: 'BAIXO', label: 'Baixo' },
-                        { value: 'MEDIO', label: 'Médio' },
-                        { value: 'ALTO', label: 'Alto' }
-                    ]
-                }
+                    options: this.riscoOptions
+                }, data?.risco)
             );
         }
 
-        return baseFields;
+        return this.buildForm(fields, 'projetoForm');
     }
 
-    static async getForm(data, action, options = {}) {
-        const fieldsConfig = this.getFieldsConfig(action);
-        let fieldsHtml = '<input type="hidden" id="id" name="id">';
+    static async createGerenteField(selectedValue) {
+        try {
+            const gerentes = await PessoaApi.listGerentes();
+            const options = gerentes.map(g => ({
+                value: g.id,
+                label: g.nome
+            }));
 
-        // Preenche os campos com os dados existentes (se for edição)
-        for (const field of fieldsConfig) {
-            let value = data ? data[field.id] : '';
-
-            // Tratamento especial para relacionamentos
-            if (field.id === 'gerente' && data?.gerente) {
-                value = data.gerente.id;
-            }
-
-            fieldsHtml += this.createFormField(field, value);
+            return this.createField({
+                type: 'select',
+                name: 'gerente.id',
+                label: 'Gerente',
+                required: true,
+                options: [
+                    { value: '', label: 'Selecione um gerente' },
+                    ...options
+                ]
+            }, selectedValue);
+        } catch (error) {
+            console.error('Erro ao carregar gerentes:', error);
+            return this.createField({
+                type: 'select',
+                name: 'gerente.id',
+                label: 'Gerente',
+                required: true,
+                options: [
+                    { value: '', label: 'Erro ao carregar gerentes' }
+                ]
+            }, selectedValue);
         }
-
-        return this.buildFormContainer(fieldsHtml, 'projetoForm');
     }
 }

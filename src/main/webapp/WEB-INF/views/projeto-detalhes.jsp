@@ -134,4 +134,5 @@
             window.location.href = '/';
         }
     });
+
 </script>

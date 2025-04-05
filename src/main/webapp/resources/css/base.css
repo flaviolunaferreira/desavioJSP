@@ -1,0 +1,70 @@
+
+:root {
+    /* Cores base inspiradas no VS Code */
+    --vscode-background: #1e1e1e;
+    --vscode-foreground: #d4d4d4;
+    --vscode-selection: #264f78;
+    --vscode-blue: #007acc;
+    --vscode-green: #608b4e;
+    --vscode-red: #f44747;
+    --vscode-yellow: #dcdcaa;
+    --vscode-orange: #ce9178;
+    --vscode-gray: #858585;
+    --vscode-border: #3c3c3c;
+}
+
+body {
+    font-family: 'Consolas', monospace;
+    background-color: var(--vscode-background);
+    color: var(--vscode-foreground);
+    line-height: 1.6;
+}
+
+a {
+    color: var(--vscode-blue);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Classes utilitárias */
+.text-vscode-blue { color: var(--vscode-blue); }
+.text-vscode-green { color: var(--vscode-green); }
+.text-vscode-red { color: var(--vscode-red); }
+.text-vscode-yellow { color: var(--vscode-yellow); }
+.text-vscode-gray { color: var(--vscode-gray); }
+
+.bg-vscode-blue { background-color: var(--vscode-blue); }
+.bg-vscode-green { background-color: var(--vscode-green); }
+.bg-vscode-red { background-color: var(--vscode-red); }
+.bg-vscode-yellow { background-color: var(--vscode-yellow); }
+.bg-vscode-gray { background-color: var(--vscode-gray); }
+
+.border-vscode-blue { border-color: var(--vscode-blue); }
+.border-vscode-green { border-color: var(--vscode-green); }
+.border-vscode-red { border-color: var(--vscode-red); }
+.border-vscode-yellow { border-color: var(--vscode-yellow); }
+.border-vscode-border { border-color: var(--vscode-border); }
+
+.btn-vscode-blue {
+    background-color: var(--vscode-blue);
+    color: white;
+    border: none;
+}
+
+.btn-vscode-blue:hover {
+    background-color: #0062a3;
+    color: white;
+}
+
+.btn-outline-vscode-blue {
+    border-color: var(--vscode-blue);
+    color: var(--vscode-blue);
+}
+
+.btn-outline-vscode-blue:hover {
+    background-color: var(--vscode-blue);
+    color: white;
+}

@@ -1,5 +1,6 @@
 class App {
     constructor() {
+        this.formManager = new FormManager();
         this.sections = {
             dashboard: new DashboardSection(),
             projects: new ProjectsSection(),
@@ -7,8 +8,6 @@ class App {
             tasks: new TasksSection(),
             members: new MembersSection()
         };
-
-        this.formManager = new FormManager();
     }
 
     init() {
@@ -16,8 +15,6 @@ class App {
         this.initEventListeners();
         this.showSection('dashboard');
     }
-
-
 
     initNavigation() {
         $(document).on('click', '.section-link', (e) => {
@@ -28,7 +25,6 @@ class App {
     }
 
     initEventListeners() {
-        // Listeners para eventos globais
         $(document).on('formSaved', (e, data) => {
             // Atualiza a seção relevante quando um formulário é salvo
             if (this.sections[data.type + 's']) {
