@@ -4,12 +4,20 @@ class DashboardSection {
             status: null,
             risk: null
         };
+        this.dragInitialized = false;
     }
 
     init() {
         this.initCharts();
         this.loadKanbanTasks().then(r => console.log('r Kanban tasks loaded', r));
         this.setupEventListeners();
+    }
+
+    // Atualize o método que usa BAIXO/MEDIO/ALTO
+    getRiskLevel(diasAtraso) {
+        if (diasAtraso > 30) return 'ALTO';
+        if (diasAtraso > 15) return 'MEDIO';
+        return 'BAIXO';
     }
 
     initCharts() {
@@ -71,9 +79,10 @@ class DashboardSection {
 
             if (this.charts.status) {
                 this.charts.status.data.datasets[0].data = [
-                    statusData.ANALISE_REALIZADA || 0,
-                    statusData.ANALISE_REALIZADA || 0,
-                    // ... outros status
+                    statusData.PENDENTE || 0,
+                    statusData.EM_ANDAMENTO || 0,
+                    statusData.BLOQUEADA || 0,
+                    statusData.CONCLUIDA || 0,
                 ];
                 this.charts.status.update();
             }
@@ -95,14 +104,35 @@ class DashboardSection {
     async loadKanbanTasks() {
         try {
             Ui.showLoading(true);
-            const tasks = await ApiService.get('/api/tarefas/recentes');
+            const tasks = await ApiService.get('/api/tarefas/recentes?limit=20');
+
+            if (!tasks || tasks.length === 0) {
+                this.showNoTasksMessage();
+                return;
+            }
+
             this.renderKanbanTasks(tasks);
+
+            // Inicializa o drag and drop APÓS renderizar as tarefas
+            if (!this.dragInitialized) {
+                this.initDragAndDrop();
+                this.dragInitialized = true;
+            }
         } catch (error) {
-            console.error('Erro ao carregar tarefas do Kanban:', error);
-            Ui.showError('Erro ao carregar tarefas');
+            console.error('Erro ao carregar tarefas:', error);
+            Ui.showError('Erro ao carregar tarefas do dashboard');
         } finally {
             Ui.showLoading(false);
         }
+    }
+
+    showNoTasksMessage() {
+        const container = $('#kanban-pending');
+        container.html(`
+            <div class="alert alert-info">
+                Nenhuma tarefa encontrada. Crie uma nova tarefa para começar.
+            </div>
+        `);
     }
 
     renderKanbanTasks(tasks) {
@@ -125,37 +155,116 @@ class DashboardSection {
     }
 
     createTaskCard(task) {
+        const titulo = task.titulo || 'Tarefa sem título';
+        const descricao = task.descricao || 'Sem descrição';
+        const dataLimite = task.dataLimite ? new Date(task.dataLimite).toLocaleDateString() : 'Sem prazo';
+        const projetoNome = (task.projeto && task.projeto.nome) ? task.projeto.nome : 'Sem projeto';
+        const status = task.status || 'PENDENTE';
+
         return `
-            <div class="card task-card mb-3 ${Ui.getStatusColorClass(task.status)}" 
-                 id="task-${task.id}" data-id="${task.id}">
-                <div class="card-header bg-vscode-card-header">
-                    <h6 class="card-title mb-0">${task.titulo}</h6>
+            <div class="task-card" data-id="${task.id}" data-status="${status}">
+                <div class="task-card-header">
+                    <h6 class="task-card-title">${titulo}</h6>
+                    <span class="task-card-deadline">${dataLimite}</span>
                 </div>
-                <div class="card-body">
-                    <p class="card-text small">${task.descricao || 'Sem descrição'}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="badge bg-vscode-gray">
-                            ${task.projeto?.nome || 'N/A'}
-                        </span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-vscode-blue" 
-                                    onclick="app.formManager.openForm('tarefa', 'editar', ${task.id})">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </div>
+                <div class="task-card-body">
+                    ${descricao}
+                </div>
+                <div class="task-card-footer">
+                    <span class="task-card-project status-${status.toLowerCase()}">
+                        ${projetoNome}
+                    </span>
+                    <div class="task-card-actions">
+                        <button class="btn btn-sm btn-outline-vscode-blue btn-edit-task" 
+                                data-id="${task.id}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         `;
     }
 
+    initDragAndDrop() {
+        // Verifica se jQuery UI está disponível
+        if (typeof $.ui === 'undefined') {
+            console.error('jQuery UI não está carregado');
+            return;
+        }
+
+        // Configura colunas como áreas de soltar
+        $('.kanban-column').droppable({
+            accept: '.task-card',
+            hoverClass: 'drop-hover',
+            tolerance: 'pointer',
+            drop: (event, ui) => {
+                const taskCard = ui.draggable;
+                const newStatus = $(event.target).closest('.kanban-column').data('status');
+                const taskId = taskCard.data('id');
+
+                this.updateTaskStatus(taskId, newStatus, taskCard);
+            }
+        });
+
+        // Configura tarefas como arrastáveis
+        $('.kanban-tasks-container').on('mousedown', '.task-card', function() {
+            $(this).draggable({
+                revert: 'invalid',
+                cursor: 'move',
+                opacity: 0.7,
+                zIndex: 100,
+                containment: '.kanban-container',
+                helper: 'clone',
+                start: function() {
+                    $(this).addClass('dragging-active');
+                },
+                stop: function() {
+                    $(this).removeClass('dragging-active');
+                }
+            });
+        });
+
+        console.log('Drag and Drop inicializado com sucesso');
+    }
+
+    async updateTaskStatus(taskId, newStatus, taskElement) {
+        try {
+            const validStatus = ['PENDENTE', 'EM_ANDAMENTO', 'BLOQUEADA', 'CONCLUIDA'];
+            if (!validStatus.includes(newStatus)) {
+                throw new Error('Status inválido');
+            }
+
+            await ApiService.patch(`/api/tarefas/${taskId}/status`, {
+                novoStatus: newStatus,
+                comentario: "Status alterado via drag-and-drop"
+            });
+
+            // Atualiza visualmente
+            taskElement.attr('data-status', newStatus)
+                .find('.task-card-project')
+                .removeClass('status-pendente status-andamento status-bloqueada status-concluida')
+                .addClass(`status-${newStatus.toLowerCase()}`);
+
+            Ui.showSuccess(`Status atualizado para ${newStatus}`);
+        } catch (error) {
+            console.error('Erro ao atualizar status:', error);
+            Ui.showError('Falha ao atualizar status');
+            taskElement.effect('shake', { times: 3 }, 500);
+        }
+    }
+
     setupEventListeners() {
+        $(document).on('click', '.btn-edit-task', (e) => {
+            const taskId = $(e.currentTarget).data('id');
+            window.app.formManager.openForm('tarefa', 'editar', taskId).then(r => console.log("problema de carregamento linha 256!"));
+        });
+
         $(document).on('formSaved', (e, data) => {
             if (data.type === 'tarefa') {
-                this.loadKanbanTasks().then(r => console.log("problema de carregamento lina 152!"));
+                this.loadKanbanTasks();
             }
             if (data.type === 'projeto') {
-                this.updateCharts().then(r => console.log("problema de carregamento linha 155!"));
+                this.updateCharts().then(r => console.log("problema de carregamento linha 264!"));
             }
         });
     }

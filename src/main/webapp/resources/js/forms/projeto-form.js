@@ -39,6 +39,11 @@ class ProjetoForm extends FormBuilder {
                 required: true
             }, data?.dataPrevisaoFim?.split('T')[0]),
             this.createField({
+                type: 'textarea',
+                name: 'descricao',
+                label: 'Descrição',
+            }, data?.descricao || ''),
+            this.createField({
                 type: 'number',
                 name: 'orcamento',
                 label: 'Orçamento',
@@ -51,7 +56,13 @@ class ProjetoForm extends FormBuilder {
                 name: 'risco',
                 label: 'Risco',
                 options: this.riscoOptions
-            }, data?.risco || 'BAIXO')
+            }, data?.risco || 'BAIXO'),
+            this.createField({
+                type: 'select',
+                name: 'status',
+                label: 'Status',
+                options: this.statusOptions
+            }, data?.status || 'EM_ANALISE')
         ];
 
         return this.buildForm(fields, 'projetoForm');

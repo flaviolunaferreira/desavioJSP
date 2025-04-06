@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/projetos")
@@ -107,6 +108,20 @@ public class ProjetoController {
             required = true, example = "1") @PathVariable Long id) {
         projetoService.excluirProjeto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/status-count")
+    @Operation(summary = "Contar projetos por status", description = "Retorna a quantidade de projetos agrupados por status",
+            responses = { @ApiResponse(responseCode = "200", description = "Contagem retornada", content = @Content(schema = @Schema(implementation = Map.class)))})
+    public ResponseEntity<Map<String, Long>> countByStatus() {
+        return ResponseEntity.ok(projetoService.countProjectsByStatus());
+    }
+
+    @GetMapping("/risk-count")
+    @Operation(summary = "Contar projetos por risco", description = "Retorna a quantidade de projetos agrupados por nível de risco",
+            responses = { @ApiResponse(responseCode = "200", description = "Contagem retornada", content = @Content(schema = @Schema(implementation = Map.class)))})
+    public ResponseEntity<Map<String, Long>> countByRisk() {
+        return ResponseEntity.ok(projetoService.countProjectsByRisk());
     }
 
     URI buildUri(ProjetoResponseDTO response) {

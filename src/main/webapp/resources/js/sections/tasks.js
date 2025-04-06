@@ -9,12 +9,13 @@ class TasksSection {
     }
 
     init() {
-        this.loadTasks();
+        this.loadTasks().then(r => console.log("Tasks loaded", r));
         this.setupEventListeners();
         this.initFilters();
     }
 
     async loadTasks() {
+        console.log('Abrindo tarefas com o filtro', this.filters);
         try {
             let url = '/api/tarefas';
             if (this.filters.status || this.filters.projetoId) {
@@ -26,6 +27,7 @@ class TasksSection {
 
             const tasks = await ApiService.get(url);
             this.renderTasks(tasks);
+            Ui.showSuccess('Tarefa atualizada com sucesso');
         } catch (error) {
             console.error('Erro ao carregar tarefas:', error);
             Ui.showError('Erro ao carregar tarefas');
@@ -95,4 +97,5 @@ class TasksSection {
             this.loadTasks();
         });
     }
+
 }

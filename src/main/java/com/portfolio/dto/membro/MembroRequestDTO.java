@@ -3,8 +3,7 @@ package com.portfolio.dto.membro;
 import com.portfolio.model.MembroEntity;
 import com.portfolio.model.PessoaEntity;
 import com.portfolio.model.ProjetoEntity;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -19,6 +18,7 @@ public class MembroRequestDTO {
     private Long idPessoa;
 
     @NotNull(message = "Data de entrada é obrigatória")
+    @PastOrPresent(message = "Data de entrada deve ser hoje ou no passado")
     private LocalDate dataEntrada;
 
     @Size(max = 50, message = "Função deve ter no máximo 50 caracteres")
@@ -27,7 +27,6 @@ public class MembroRequestDTO {
     public MembroEntity toEntity() {
         MembroEntity membro = new MembroEntity();
 
-        // Cria entidades relacionadas apenas com IDs
         ProjetoEntity projeto = new ProjetoEntity();
         projeto.setId(this.idProjeto);
         membro.setProjeto(projeto);

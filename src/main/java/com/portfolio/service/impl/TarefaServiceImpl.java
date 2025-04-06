@@ -11,10 +11,17 @@ import com.portfolio.repository.*;
 import com.portfolio.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,24 +30,33 @@ public class TarefaServiceImpl implements TarefaService {
     private final TarefaRepository tarefaRepository;
     private final ProjetoRepository projetoRepository;
     private final PessoaRepository pessoaRepository;
+    private static final Logger log = LoggerFactory.getLogger(TarefaServiceImpl.class);
 
     @Override
     @Transactional
     public TarefaResponseDTO criarTarefa(TarefaRequestDTO tarefaDTO) {
+        log.info("Criando nova tarefa para o projeto: {}", tarefaDTO.getIdProjeto());
+
         validarNovaTarefa(tarefaDTO);
 
         TarefaEntity tarefa = tarefaDTO.toEntity();
         tarefa.setProjeto(buscarProjetoValido(tarefaDTO.getIdProjeto()));
 
         if (tarefaDTO.getIdResponsavel() != null) {
-            tarefa.setResponsavel(buscarPessoaValida(tarefaDTO.getIdResponsavel()));
+            PessoaEntity responsavel = buscarPessoaValida(tarefaDTO.getIdResponsavel());
+            validarResponsavel(responsavel);
+            tarefa.setResponsavel(responsavel);
         }
 
-        tarefa.setStatus(StatusTarefa.valueOf("PENDENTE"));
+        // Força status inicial como PENDENTE
+        tarefa.setStatus(StatusTarefa.PENDENTE);
+
         TarefaEntity tarefaSalva = tarefaRepository.save(tarefa);
+        log.info("Tarefa criada com sucesso: {}", tarefaSalva.getId());
 
         return TarefaResponseDTO.fromEntity(tarefaSalva);
     }
+
 
     @Override
     @Transactional
@@ -95,15 +111,19 @@ public class TarefaServiceImpl implements TarefaService {
     @Transactional
     public TarefaResponseDTO atualizarStatus(Long id, TarefaStatusDTO statusDTO) {
         TarefaEntity tarefa = buscarTarefaValida(id);
-        validarTransicaoStatus(String.valueOf(tarefa.getStatus()), statusDTO.getNovoStatus());
-
+        validarTransicaoStatus(tarefa.getStatus(), statusDTO.getNovoStatus());
         statusDTO.applyToEntity(tarefa);
 
-        if (statusDTO.getNovoStatus().equals("CONCLUIDA")) {
-            tarefa.setDataConclusao(LocalDateTime.now());
-        }
-
         return TarefaResponseDTO.fromEntity(tarefaRepository.save(tarefa));
+    }
+
+    @Override
+    public List<TarefaResponseDTO> listarTarefasRecentes(int limit) {
+        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "dataLimite"));
+
+        return tarefaRepository.findAll(pageable).stream()
+                .map(TarefaResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // Métodos privados para validações
@@ -131,10 +151,27 @@ public class TarefaServiceImpl implements TarefaService {
         }
     }
 
-    private void validarTransicaoStatus(String statusAtual, String novoStatus) {
-        if (statusAtual.equals("CONCLUIDA") && !novoStatus.equals("CONCLUIDA")) {
-            throw new OperacaoNaoPermitidaException(
-                    "Tarefa concluída não pode ter status alterado");
+    private void validarResponsavel(PessoaEntity responsavel) {
+        if (!responsavel.isFuncionario()) {
+            log.error("Tentativa de atribuir tarefa a não-funcionário: {}", responsavel.getId());
+            throw new ValidacaoException("O responsável deve ser um funcionário");
         }
     }
+
+    private void validarTransicaoStatus(StatusTarefa atual, String novoStatus) {
+        if (atual == StatusTarefa.CONCLUIDA && !novoStatus.equals("CONCLUIDA")) {
+            throw new ValidacaoException("Tarefa concluída não pode ter status alterado");
+        }
+    }
+
+//    @Override
+//    public List<TarefaResponseDTO> filtrarTarefas(Long projetoId, String status) {
+//        StatusTarefa statusEnum = (status != null) ? StatusTarefa.valueOf(status) : null;
+//
+//        List<TarefaEntity> tarefas = tarefaRepository.filtrarTarefas(projetoId, statusEnum);
+//
+//        return tarefas.stream()
+//                .map(TarefaResponseDTO::fromEntity)
+//                .collect(Collectors.toList());
+//    }
 }

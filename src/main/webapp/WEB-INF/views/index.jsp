@@ -28,8 +28,8 @@
 
                 <!-- Quadro Kanban -->
                 <div class="kanban-container">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4><i class="bi bi-kanban"></i> Quadro Kanban (Tarefas Recentes)</h4>
+                    <div class="kanban-header">
+                        <h4><i class="bi bi-kanban"></i> Quadro Kanban</h4>
                         <button type="button" class="btn btn-sm btn-outline-vscode-blue"
                                 data-bs-toggle="modal" data-bs-target="#crudModal"
                                 data-type="tarefa" data-action="criar">
@@ -37,33 +37,25 @@
                         </button>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="kanban-column" data-status="PENDENTE">
-                                <h5 class="kanban-title text-center"><i class="bi bi-hourglass"></i> Pendente</h5>
-                                <div id="kanban-pending" class="kanban-tasks-container"></div>
-                            </div>
+                    <div class="kanban-columns">
+                        <div class="kanban-column" data-status="PENDENTE">
+                            <h5 class="kanban-title"><i class="bi bi-hourglass"></i> Pendente</h5>
+                            <div id="kanban-pending" class="kanban-tasks-container"></div>
                         </div>
 
-                        <div class="col-md-3">
-                            <div class="kanban-column" data-status="EM_ANDAMENTO">
-                                <h5 class="kanban-title text-center"><i class="bi bi-arrow-repeat"></i> Em Andamento</h5>
-                                <div id="kanban-in-progress" class="kanban-tasks-container"></div>
-                            </div>
+                        <div class="kanban-column" data-status="EM_ANDAMENTO">
+                            <h5 class="kanban-title"><i class="bi bi-arrow-repeat"></i> Em Andamento</h5>
+                            <div id="kanban-in-progress" class="kanban-tasks-container"></div>
                         </div>
 
-                        <div class="col-md-3">
-                            <div class="kanban-column" data-status="BLOQUEADA">
-                                <h5 class="kanban-title text-center"><i class="bi bi-exclamation-octagon"></i> Bloqueada</h5>
-                                <div id="kanban-blocked" class="kanban-tasks-container"></div>
-                            </div>
+                        <div class="kanban-column" data-status="BLOQUEADA">
+                            <h5 class="kanban-title"><i class="bi bi-exclamation-octagon"></i> Bloqueada</h5>
+                            <div id="kanban-blocked" class="kanban-tasks-container"></div>
                         </div>
 
-                        <div class="col-md-3">
-                            <div class="kanban-column" data-status="CONCLUIDA">
-                                <h5 class="kanban-title text-center"><i class="bi bi-check-circle"></i> Concluída</h5>
-                                <div id="kanban-completed" class="kanban-tasks-container"></div>
-                            </div>
+                        <div class="kanban-column" data-status="CONCLUIDA">
+                            <h5 class="kanban-title"><i class="bi bi-check-circle"></i> Concluída</h5>
+                            <div id="kanban-completed" class="kanban-tasks-container"></div>
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ import com.portfolio.dto.projeto.ProjetoStatusUpdateDTO;
 import com.portfolio.model.ProjetoEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProjetoService {
     ProjetoResponseDTO criarProjeto(ProjetoRequestDTO projetoDTO);
@@ -17,4 +18,8 @@ public interface ProjetoService {
     String calcularRisco(Long projetoId);
 
     ProjetoEntity buscarProjetoComMembros(Long id);
+
+    Map<String, Long> countProjectsByStatus();
+
+    Map<String, Long> countProjectsByRisk();
 }

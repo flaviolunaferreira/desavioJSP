@@ -56,25 +56,18 @@ public class TarefaController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar tarefas por projeto",
-            description = "Recupera todas as tarefas de um projeto específico",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de tarefas retornada",
-                            content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
-                    @ApiResponse(responseCode = "404", description = "Projeto não encontrado")})
-    public ResponseEntity<List<TarefaResponseDTO>> listarPorProjeto(
-            @Parameter(description = "ID do projeto", required = true, example = "1")
-            @RequestParam Long projetoId) {
+    @Operation(summary = "Listar tarefas por projeto", description = "Recupera todas as tarefas de um projeto específico",
+            responses = { @ApiResponse(responseCode = "200", description = "Lista de tarefas retornada", content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
+                          @ApiResponse(responseCode = "404", description = "Projeto não encontrado")})
+    public ResponseEntity<List<TarefaResponseDTO>> listarPorProjeto( @Parameter(description = "ID do projeto", required = true, example = "1")
+                                                                     @RequestParam Long projetoId) {
         return ResponseEntity.ok(tarefaService.listarTarefasPorProjeto(projetoId));
     }
 
     @GetMapping("/responsavel/{responsavelId}")
-    @Operation(summary = "Listar tarefas por responsável",
-            description = "Recupera todas as tarefas atribuídas a um responsável",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de tarefas retornada",
-                            content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
-                    @ApiResponse(responseCode = "404", description = "Responsável não encontrado")})
+    @Operation(summary = "Listar tarefas por responsável", description = "Recupera todas as tarefas atribuídas a um responsável",
+            responses = { @ApiResponse(responseCode = "200", description = "Lista de tarefas retornada", content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
+                          @ApiResponse(responseCode = "404", description = "Responsável não encontrado")})
     public ResponseEntity<List<TarefaResponseDTO>> listarPorResponsavel(
             @Parameter(description = "ID do responsável", required = true, example = "1")
             @PathVariable Long responsavelId) {
@@ -82,34 +75,27 @@ public class TarefaController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Atualizar tarefa",
-            description = "Atualiza parcialmente os dados de uma tarefa",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Tarefa atualizada",
-                            content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
-                    @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-                    @ApiResponse(responseCode = "404", description = "Tarefa ou responsável não encontrado")})
-    public ResponseEntity<TarefaResponseDTO> atualizarTarefa(
-            @Parameter(description = "ID da tarefa", required = true, example = "1")
-            @PathVariable Long id,
-            @Parameter(description = "Dados parciais para atualização", required = true)
-            @RequestBody @Valid TarefaUpdateDTO request) {
+    @Operation(summary = "Atualizar tarefa", description = "Atualiza parcialmente os dados de uma tarefa",
+            responses = { @ApiResponse(responseCode = "200", description = "Tarefa atualizada", content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
+                          @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+                          @ApiResponse(responseCode = "404", description = "Tarefa ou responsável não encontrado")})
+    public ResponseEntity<TarefaResponseDTO> atualizarTarefa( @Parameter(description = "ID da tarefa", required = true, example = "1")
+                                                              @PathVariable Long id, @Parameter(description = "Dados parciais para atualização", required = true)
+                                                              @RequestBody @Valid TarefaUpdateDTO request) {
         return ResponseEntity.ok(tarefaService.atualizarTarefa(id, request));
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Atualizar status da tarefa",
-            description = "Realiza a transição de status de uma tarefa",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Status atualizado",
-                            content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
-                    @ApiResponse(responseCode = "400", description = "Transição de status inválida"),
-                    @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")})
+    @Operation(summary = "Atualizar status da tarefa", description = "Realiza a transição de status de uma tarefa",
+            responses = { @ApiResponse(responseCode = "200", description = "Status atualizado", content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
+                          @ApiResponse(responseCode = "400", description = "Transição de status inválida"),
+                          @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")})
     public ResponseEntity<TarefaResponseDTO> atualizarStatus(
             @Parameter(description = "ID da tarefa", required = true, example = "1")
             @PathVariable Long id,
             @Parameter(description = "Novo status e comentários", required = true)
             @RequestBody @Valid TarefaStatusDTO request) {
+
         return ResponseEntity.ok(tarefaService.atualizarStatus(id, request));
     }
 
@@ -126,6 +112,27 @@ public class TarefaController {
         tarefaService.excluirTarefa(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/recentes")
+    @Operation(summary = "Listar tarefas recentes",
+            description = "Recupera as tarefas mais recentes para o dashboard",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de tarefas retornada",
+                            content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class)))
+            })
+    public ResponseEntity<List<TarefaResponseDTO>> listarTarefasRecentes(
+            @Parameter(description = "Número máximo de tarefas a retornar", example = "10")
+            @RequestParam(defaultValue = "10") int limit) {
+
+        return ResponseEntity.ok(tarefaService.listarTarefasRecentes(limit));
+    }
+
+//    @GetMapping("/filtrar")
+//    public List<TarefaResponseDTO> filtrarTarefas(
+//            @RequestParam(required = false) Long projetoId,
+//            @RequestParam(required = false) String status) {
+//        return tarefaService.filtrarTarefas(projetoId, status);
+//    }
 
     URI buildUri(TarefaResponseDTO response) {
         return URI.create("/api/tarefas/" + response.getId());

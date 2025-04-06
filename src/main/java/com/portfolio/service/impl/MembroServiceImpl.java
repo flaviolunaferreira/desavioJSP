@@ -5,10 +5,13 @@ import com.portfolio.dto.membro.MembroResponseDTO;
 import com.portfolio.dto.membro.MembroUpdateDTO;
 import com.portfolio.exception.*;
 import com.portfolio.model.*;
+import com.portfolio.model.enumeration.StatusProjeto;
 import com.portfolio.repository.*;
 import com.portfolio.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +23,13 @@ public class MembroServiceImpl implements MembroService {
     private final MembroRepository membroRepository;
     private final ProjetoRepository projetoRepository;
     private final PessoaRepository pessoaRepository;
+    private static final Logger log = LoggerFactory.getLogger(MembroServiceImpl.class);
 
     @Override
     @Transactional
     public MembroResponseDTO associarMembro(MembroRequestDTO membroDTO) {
+        log.info("Associando membro ao projeto: {}", membroDTO.getIdProjeto());
+
         validarAssociacao(membroDTO);
 
         MembroEntity membro = membroDTO.toEntity();
@@ -31,6 +37,8 @@ public class MembroServiceImpl implements MembroService {
         membro.setPessoa(buscarPessoaValida(membroDTO.getIdPessoa()));
 
         MembroEntity membroSalvo = membroRepository.save(membro);
+        log.info("Membro associado com sucesso: {}", membroSalvo.getPessoa());
+
         return MembroResponseDTO.fromEntity(membroSalvo);
     }
 
@@ -93,14 +101,21 @@ public class MembroServiceImpl implements MembroService {
     }
 
     private void validarAssociacao(MembroRequestDTO membroDTO) {
+        // Verifica se a associação já existe
         if (membroRepository.existsByProjetoAndPessoa(membroDTO.getIdProjeto(), membroDTO.getIdPessoa())) {
+            log.error("Tentativa de associar membro já existente");
             throw new ConflitoException("Esta pessoa já está associada ao projeto");
         }
 
         ProjetoEntity projeto = buscarProjetoValido(membroDTO.getIdProjeto());
-        if (String.valueOf(projeto.getStatus()).equals("ENCERRADO") || String.valueOf(projeto.getStatus()).equals("CANCELADO")) {
+
+        // Verifica status do projeto
+        if (projeto.getStatus() == StatusProjeto.ENCERRADO ||
+                projeto.getStatus() == StatusProjeto.CANCELADO) {
+            log.error("Tentativa de associar membro a projeto inativo");
             throw new OperacaoNaoPermitidaException(
                     "Não é possível associar membros a projetos encerrados ou cancelados");
         }
     }
+
 }

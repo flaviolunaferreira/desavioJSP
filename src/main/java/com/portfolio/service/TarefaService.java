@@ -15,4 +15,8 @@ public interface TarefaService {
     List<TarefaResponseDTO> listarTarefasPorProjeto(Long projetoId);
     List<TarefaResponseDTO> listarTarefasPorResponsavel(Long responsavelId);
     TarefaResponseDTO atualizarStatus(Long id, TarefaStatusDTO statusDTO);
+
+    List<TarefaResponseDTO> listarTarefasRecentes(int limit);
+
+//    List<TarefaResponseDTO> filtrarTarefas(Long projetoId, String status);
 }

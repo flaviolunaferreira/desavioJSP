@@ -50,7 +50,7 @@
                     data: JSON.stringify(data)
                 });
             } catch (error) {
-                console.error(`PATCH request failed to ${url}:`, error);
+                console.error(`A Alteração falhou em ${url}:`, error);
                 throw this.handleError(error);
             }
         }
@@ -63,7 +63,7 @@
                     contentType: 'application/json'
                 });
             } catch (error) {
-                console.error(`DELETE request failed to ${url}:`, error);
+                console.error(`Deu Ruim pra apagar esse trem ${url}:`, error);
                 throw this.handleError(error);
             }
         }
@@ -78,11 +78,9 @@
                     JSON.stringify(error.responseJSON);
             } else if (error.responseText) {
                 try {
-                    // Tenta parsear como JSON
                     const jsonError = JSON.parse(error.responseText);
                     errorMsg = jsonError.message || jsonError.error || error.responseText;
                 } catch {
-                    // Texto simples
                     errorMsg = error.responseText;
                 }
             } else if (error.statusText) {
@@ -113,7 +111,7 @@ class ProjetoApi {
     }
 
     static updateStatus(id, status) {
-        return ApiService.patch(`/api/projetos/${id}/status`, { status });
+        return ApiService.patch(`/api/projetos/${id}/status`, { status, comentario });
     }
 
     static delete(id) {

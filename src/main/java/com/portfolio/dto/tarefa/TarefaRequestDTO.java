@@ -25,7 +25,7 @@ public class TarefaRequestDTO {
     private Long idResponsavel;
 
     @NotNull(message = "Status é obrigatório")
-    private String status;
+    private String status = "PENDENTE"; // Valor padrão
 
     @FutureOrPresent(message = "Data limite deve ser no presente ou futuro")
     private LocalDateTime dataLimite;
@@ -37,12 +37,9 @@ public class TarefaRequestDTO {
         tarefa.setStatus(StatusTarefa.valueOf(this.status));
         tarefa.setDataLimite(this.dataLimite);
 
-        // Cria entidades relacionadas apenas com IDs
-        if (this.idProjeto != null) {
-            ProjetoEntity projeto = new ProjetoEntity();
-            projeto.setId(this.idProjeto);
-            tarefa.setProjeto(projeto);
-        }
+        ProjetoEntity projeto = new ProjetoEntity();
+        projeto.setId(this.idProjeto);
+        tarefa.setProjeto(projeto);
 
         if (this.idResponsavel != null) {
             PessoaEntity responsavel = new PessoaEntity();

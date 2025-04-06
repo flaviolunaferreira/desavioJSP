@@ -51,8 +51,6 @@ class FormManager {
                     delete processedData.projetoId;
                 }
                 break;
-
-            // Adicione outros casos conforme necessário
         }
 
         return processedData;

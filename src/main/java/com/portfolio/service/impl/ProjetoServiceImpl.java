@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -160,6 +162,26 @@ public class ProjetoServiceImpl implements ProjetoService {
         if (projetoDTO.getDataInicio().isAfter(projetoDTO.getDataPrevisaoFim())) {
             throw new ValidacaoException("Data de previsão deve ser após a data de início");
         }
+    }
+
+    @Override
+    public Map<String, Long> countProjectsByStatus() {
+        List<Object[]> results = projetoRepository.countByStatus();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        arr -> ((StatusProjeto) arr[0]).name(),
+                        arr -> (Long) arr[1]
+                ));
+    }
+
+    @Override
+    public Map<String, Long> countProjectsByRisk() {
+        List<Object[]> results = projetoRepository.countByRisk();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        arr -> ((RiscoProjeto) arr[0]).name(),
+                        arr -> (Long) arr[1]
+                ));
     }
 
     private boolean projetoPodeSerExcluido(String status) {
