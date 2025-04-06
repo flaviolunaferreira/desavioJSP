@@ -2,20 +2,20 @@
     <!-- Modal CRUD -->
 <div class="modal fade" id="crudModal" tabindex="-1" aria-labelledby="crudModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-    <div class="modal-content bg-vscode-card">
-    <div class="modal-header border-vscode-border">
-    <h5 class="modal-title text-vscode-blue" id="crudModalLabel"></h5>
-<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<div class="modal-body" id="crudModalBody">
-    <!-- O conteúdo será carregado dinamicamente via JavaScript -->
-</div>
-<div class="modal-footer border-vscode-border">
-    <button type="button" class="btn btn-vscode-secondary" data-bs-dismiss="modal">Fechar</button>
-    <button type="button" class="btn btn-vscode-blue" id="saveButton">Salvar</button>
-</div>
-</div>
-</div>
+        <div class="modal-content bg-vscode-card">
+            <div class="modal-header border-vscode-border">
+                <h5 class="modal-title text-vscode-blue" id="crudModalLabel"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="crudModalBody">
+                <!-- Conteúdo será inserido aqui dinamicamente -->
+            </div>
+            <div class="modal-footer border-vscode-border">
+                <button type="button" class="btn btn-vscode-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-vscode-blue" id="saveButton">Salvar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal de Confirmação -->

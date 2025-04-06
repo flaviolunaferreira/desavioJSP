@@ -17,10 +17,12 @@
     background-color: #2d2d2d;
     border: 1px solid var(--vscode-border);
     border-radius: 4px;
+    color: aqua !important;
 }
 
 .bg-vscode-card-header {
-    background-color: #252526;
+    background-color: aqua !important;
+    color: #1e1e1e !important;
     border-bottom: 1px solid var(--vscode-border);
 }
 
@@ -38,4 +40,39 @@
 
 .nav-pills .nav-link:hover:not(.active) {
     background-color: #2a2d2e;
+}
+
+/* Adicione isso ao seu arquivo layout.css */
+.dashboard-section {
+    padding: 20px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+.chart-container {
+    background-color: #2d2d2d;
+    border: 1px solid var(--vscode-border);
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    height: 300px;
+}
+
+.chart-container h5 {
+    margin-bottom: 15px;
+    color: var(--vscode-blue);
+}
+
+.kanban-container {
+    margin-top: 20px;
+    background-color: #252526;
+    border-radius: 4px;
+    padding: 15px;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.kanban-column {
+    min-height: 350px;
+    height: 100%;
 }

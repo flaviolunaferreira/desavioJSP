@@ -22,12 +22,12 @@ public class TarefaEntity extends BasicEntity {
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_projeto", nullable = false,
             foreignKey = @ForeignKey(name = "fk_tarefa_projeto"))
     private ProjetoEntity projeto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_responsavel",
             foreignKey = @ForeignKey(name = "fk_tarefa_responsavel"))
     private PessoaEntity responsavel;

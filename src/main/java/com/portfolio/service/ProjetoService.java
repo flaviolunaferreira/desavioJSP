@@ -3,6 +3,8 @@ package com.portfolio.service;
 import com.portfolio.dto.projeto.ProjetoRequestDTO;
 import com.portfolio.dto.projeto.ProjetoResponseDTO;
 import com.portfolio.dto.projeto.ProjetoStatusUpdateDTO;
+import com.portfolio.model.ProjetoEntity;
+
 import java.util.List;
 
 public interface ProjetoService {
@@ -13,4 +15,6 @@ public interface ProjetoService {
     List<ProjetoResponseDTO> listarTodosProjetos();
     ProjetoResponseDTO atualizarStatus(Long id, ProjetoStatusUpdateDTO statusDTO);
     String calcularRisco(Long projetoId);
+
+    ProjetoEntity buscarProjetoComMembros(Long id);
 }

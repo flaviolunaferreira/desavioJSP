@@ -118,6 +118,11 @@ public class ProjetoServiceImpl implements ProjetoService {
         return "BAIXO";
     }
 
+    @Override
+    public ProjetoEntity buscarProjetoComMembros(Long id) {
+        return null;
+    }
+
     // Métodos privados de validação (mantidos iguais)
     private ProjetoEntity buscarProjetoValido(Long id) {
         return projetoRepository.findById(id)

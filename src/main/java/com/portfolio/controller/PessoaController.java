@@ -121,7 +121,7 @@ public class PessoaController {
         return ResponseEntity.noContent().build();
     }
 
-    private URI buildUri(PessoaResponseDTO response) {
+    URI buildUri(PessoaResponseDTO response) {
         return URI.create("/api/pessoas/" + response.getId());
     }
 }

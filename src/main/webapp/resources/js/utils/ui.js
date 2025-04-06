@@ -47,20 +47,15 @@ class Ui {
      * @private
      */
     static showToast(title, message, bgClass, duration) {
-        // Remove toasts existentes
-        $('.ui-toast').remove();
-
         const toastId = 'toast-' + Date.now();
         const toast = $(`
-        <div class="ui-toast position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
-            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header ${bgClass} text-white">
-                    <strong class="me-auto">${title}</strong>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" 
+             role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 20px; right: 20px; z-index: 1100">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>${title}</strong><br>${message}
                 </div>
-                <div class="toast-body bg-light">
-                    ${message}
-                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     `);
@@ -68,17 +63,16 @@ class Ui {
         $('body').append(toast);
 
         // Inicializa o toast manualmente
-        const toastElement = document.getElementById(toastId);
-        const bsToast = new bootstrap.Toast(toastElement, {
+        const toastElement = new bootstrap.Toast(document.getElementById(toastId), {
             autohide: true,
             delay: duration
         });
 
-        bsToast.show();
+        toastElement.show();
 
         // Remove o elemento do DOM após esconder
-        toastElement.addEventListener('hidden.bs.toast', () => {
-            toast.remove();
+        $(`#${toastId}`).on('hidden.bs.toast', function () {
+            $(this).remove();
         });
 
         // Configura o fechamento automático

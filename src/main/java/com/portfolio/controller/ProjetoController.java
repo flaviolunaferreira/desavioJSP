@@ -36,6 +36,7 @@ public class ProjetoController {
                     @ApiResponse(responseCode = "409", description = "Conflito (nome já existe)")})
     public ResponseEntity<ProjetoResponseDTO> criarProjeto( @Parameter(description = "Dados do projeto a ser criado", required = true)
                                                             @RequestBody @Valid ProjetoRequestDTO request) {
+        System.out.println(request);
         ProjetoResponseDTO response = projetoService.criarProjeto(request);
         return ResponseEntity.created(buildUri(response)).body(response);
     }
@@ -108,7 +109,7 @@ public class ProjetoController {
         return ResponseEntity.noContent().build();
     }
 
-    private URI buildUri(ProjetoResponseDTO response) {
+    URI buildUri(ProjetoResponseDTO response) {
         return URI.create("/api/projetos/" + response.getId());
     }
 }

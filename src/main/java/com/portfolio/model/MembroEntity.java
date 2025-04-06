@@ -14,13 +14,13 @@ import java.time.LocalDate;
 public class MembroEntity extends BasicEntity {
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_projeto", nullable = false,
             foreignKey = @ForeignKey(name = "fk_membro_projeto"))
     private ProjetoEntity projeto;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_pessoa", nullable = false,
             foreignKey = @ForeignKey(name = "fk_membro_pessoa"))
     private PessoaEntity pessoa;

@@ -13,21 +13,49 @@ class FormManager {
     }
 
     initModalEvents() {
-        // Evento para abrir o modal com os dados corretos
+        // Evento para abrir o modal
         $(document).on('click', '[data-bs-toggle="modal"][data-bs-target="#crudModal"]', (e) => {
+            e.preventDefault();
             const button = $(e.currentTarget);
-            const type = button.data('type');
-            const action = button.data('action');
-            const id = button.data('id');
-            const options = {
-                projetoId: button.data('projeto-id') || null
-            };
-
-            this.openForm(type, action, id, options);
+            this.openForm(
+                button.data('type'),
+                button.data('action'),
+                button.data('id'),
+                { projetoId: button.data('projeto-id') }
+            );
         });
 
-        // Evento para salvar o formulário
-        $('#saveButton').click(() => this.saveForm());
+        // Evento para salvar
+        $('#saveButton').off('click').on('click', () => this.saveForm());
+    }
+
+    processFormData(type, formData) {
+        const processedData = { ...formData };
+
+        // Processamento específico para cada tipo
+        switch (type) {
+            case 'projeto':
+                if (formData['gerente.id']) {
+                    processedData.idGerente = parseInt(formData['gerente.id']);
+                    delete processedData['gerente.id'];
+                }
+                break;
+
+            case 'tarefa':
+                if (formData['responsavel.id']) {
+                    processedData.idResponsavel = parseInt(formData['responsavel.id']);
+                    delete processedData['responsavel.id'];
+                }
+                if (formData.projetoId) {
+                    processedData.idProjeto = parseInt(formData.projetoId);
+                    delete processedData.projetoId;
+                }
+                break;
+
+            // Adicione outros casos conforme necessário
+        }
+
+        return processedData;
     }
 
     async openForm(type, action = 'criar', id = null, options = {}) {
@@ -129,29 +157,69 @@ class FormManager {
         const form = $('#crudModalBody').find('form');
         const formId = form.attr('id');
         const type = formId.replace('Form', '');
+        const errorElement = form.find('#formError');
+        errorElement.addClass('d-none').text('');
 
-        if (!formId || !type) {
-            this.showError('Não foi possível identificar o tipo de formulário');
+        // Validação do formulário HTML5
+        if (form[0].checkValidity && !form[0].checkValidity()) {
+            form.addClass('was-validated');
             return;
         }
 
         try {
-            this.showLoading(true);
+            Ui.showLoading(true);
 
+            // Obter dados do formulário
             const formData = this.getFormData(form);
-            const response = await this.submitForm(type, formData);
+
+            // Transformar campos com . para objetos aninhados
+            const processedData = this.processFormData(type, formData);
+
+            // Validações genéricas
+            const validationError = this.validateFormData(type, processedData);
+            if (validationError) {
+                throw new Error(validationError);
+            }
+
+            // Enviar dados
+            let response;
+            if (processedData.id) {
+                response = await ApiService.put(`/api/${type}s/${processedData.id}`, processedData);
+            } else {
+                response = await ApiService.post(`/api/${type}s`, processedData);
+            }
 
             $('#crudModal').modal('hide');
-            this.showSuccess(`${this.formTitles[type]} salvo com sucesso!`);
-
-            // Dispara evento para atualizar as listagens
+            Ui.showSuccess(`${this.formTitles[type]} salvo com sucesso!`);
             $(document).trigger('formSaved', { type, data: response });
+
         } catch (error) {
-            console.error('Erro ao salvar formulário:', error);
-            this.showError(error.message || 'Erro ao salvar dados');
+            console.error('Erro ao salvar:', error);
+            Ui.showError(error.message);
+            errorElement.text(error.message).removeClass('d-none');
         } finally {
-            this.showLoading(false);
+            Ui.showLoading(false);
         }
+    }
+
+    validateFormData(type, data) {
+        const validations = {
+            tarefa: () => {
+                if (!data.idProjeto) return 'O projeto é obrigatório';
+                if (!data.titulo) return 'O título é obrigatório';
+                if (!data.status) return 'O status é obrigatório';
+                return null;
+            },
+            projeto: () => {
+                if (!data.nome) return 'O nome é obrigatório';
+                if (!data.idGerente) return 'O gerente é obrigatório';
+                return null;
+            },
+            // Adicione validações para outros tipos conforme necessário
+        };
+
+        const validator = validations[type] || (() => null);
+        return validator();
     }
 
     getFormData(form) {

@@ -23,51 +23,36 @@ class ProjetoForm extends FormBuilder {
                 type: 'text',
                 name: 'nome',
                 label: 'Nome',
-                required: true
+                required: true,
+                maxlength: 100
             }, data?.nome),
-            this.createField({
-                type: 'textarea',
-                name: 'descricao',
-                label: 'Descrição'
-            }, data?.descricao),
             this.createField({
                 type: 'date',
                 name: 'dataInicio',
                 label: 'Data de Início',
                 required: true
-            }, data?.dataInicio ? new Date(data.dataInicio).toISOString().split('T')[0] : ''),
+            }, data?.dataInicio?.split('T')[0]),
             this.createField({
                 type: 'date',
                 name: 'dataPrevisaoFim',
                 label: 'Data Prevista de Término',
                 required: true
-            }, data?.dataPrevisaoFim ? new Date(data.dataPrevisaoFim).toISOString().split('T')[0] : ''),
+            }, data?.dataPrevisaoFim?.split('T')[0]),
             this.createField({
                 type: 'number',
                 name: 'orcamento',
                 label: 'Orçamento',
-                step: '0.01'
+                step: "0.01",
+                min: "0"
             }, data?.orcamento),
-            await this.createGerenteField(data?.gerente?.id)
+            await this.createGerenteField(data?.gerente?.id),
+            this.createField({
+                type: 'select',
+                name: 'risco',
+                label: 'Risco',
+                options: this.riscoOptions
+            }, data?.risco || 'BAIXO')
         ];
-
-        if (action === 'editar') {
-            fields.push(
-                this.createField({
-                    type: 'select',
-                    name: 'status',
-                    label: 'Status',
-                    required: true,
-                    options: this.statusOptions
-                }, data?.status),
-                this.createField({
-                    type: 'select',
-                    name: 'risco',
-                    label: 'Risco',
-                    options: this.riscoOptions
-                }, data?.risco)
-            );
-        }
 
         return this.buildForm(fields, 'projetoForm');
     }

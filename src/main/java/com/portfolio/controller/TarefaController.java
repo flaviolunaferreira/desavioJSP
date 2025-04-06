@@ -31,11 +31,8 @@ public class TarefaController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar nova tarefa",
-            description = "Registra uma nova tarefa para um projeto",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso",
-                            content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
+    @Operation(summary = "Criar nova tarefa", description = "Registra uma nova tarefa para um projeto", responses = {
+            @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso", content = @Content(schema = @Schema(implementation = TarefaResponseDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Dados inválidos ou responsável não é funcionário"),
                     @ApiResponse(responseCode = "404", description = "Projeto ou responsável não encontrado")})
     public ResponseEntity<TarefaResponseDTO> criarTarefa(
@@ -130,7 +127,7 @@ public class TarefaController {
         return ResponseEntity.noContent().build();
     }
 
-    private URI buildUri(TarefaResponseDTO response) {
+    URI buildUri(TarefaResponseDTO response) {
         return URI.create("/api/tarefas/" + response.getId());
     }
 }

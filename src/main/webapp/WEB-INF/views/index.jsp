@@ -9,72 +9,68 @@
 
         <main class="col-md-9 col-lg-10 px-md-4 py-3 bg-vscode-main">
             <!-- Dashboard -->
-            <div id="dashboard-section" class="section-content">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
-                    <h1 class="h2"><i class="bi bi-speedometer2"></i> Dashboard</h1>
-                </div>
-
+            <div id="dashboard-section" class="section-content active">
                 <!-- Gráficos -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="chart-container">
                             <h5 class="text-center">Status dos Projetos</h5>
-                            <canvas id="projectsStatusChart"></canvas>
+                            <canvas id="projectsStatusChart" height="250"></canvas>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="chart-container">
                             <h5 class="text-center">Distribuição de Riscos</h5>
-                            <canvas id="projectsRiskChart"></canvas>
+                            <canvas id="projectsRiskChart" height="250"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quadro Kanban Resumido -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4><i class="bi bi-kanban"></i> Quadro Kanban (Tarefas Recentes)</h4>
-                            <button type="button" class="btn btn-sm btn-outline-vscode-blue"
-                                    data-bs-toggle="modal" data-bs-target="#crudModal"
-                                    data-type="tarefa" data-action="criar">
-                                <i class="bi bi-plus-lg"></i> Nova Tarefa
-                            </button>
-                        </div>
+                <!-- Quadro Kanban -->
+                <div class="kanban-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4><i class="bi bi-kanban"></i> Quadro Kanban (Tarefas Recentes)</h4>
+                        <button type="button" class="btn btn-sm btn-outline-vscode-blue"
+                                data-bs-toggle="modal" data-bs-target="#crudModal"
+                                data-type="tarefa" data-action="criar">
+                            <i class="bi bi-plus-lg"></i> Nova Tarefa
+                        </button>
                     </div>
 
-                    <div class="col-md-3">
-                        <div class="kanban-column" data-status="PENDENTE">
-                            <h5 class="kanban-title text-center"><i class="bi bi-hourglass"></i> Pendente</h5>
-                            <div id="kanban-pending" class="kanban-tasks-container"></div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="kanban-column" data-status="PENDENTE">
+                                <h5 class="kanban-title text-center"><i class="bi bi-hourglass"></i> Pendente</h5>
+                                <div id="kanban-pending" class="kanban-tasks-container"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-3">
-                        <div class="kanban-column" data-status="EM_ANDAMENTO">
-                            <h5 class="kanban-title text-center"><i class="bi bi-arrow-repeat"></i> Em Andamento</h5>
-                            <div id="kanban-in-progress" class="kanban-tasks-container"></div>
+                        <div class="col-md-3">
+                            <div class="kanban-column" data-status="EM_ANDAMENTO">
+                                <h5 class="kanban-title text-center"><i class="bi bi-arrow-repeat"></i> Em Andamento</h5>
+                                <div id="kanban-in-progress" class="kanban-tasks-container"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-3">
-                        <div class="kanban-column" data-status="BLOQUEADA">
-                            <h5 class="kanban-title text-center"><i class="bi bi-exclamation-octagon"></i> Bloqueada</h5>
-                            <div id="kanban-blocked" class="kanban-tasks-container"></div>
+                        <div class="col-md-3">
+                            <div class="kanban-column" data-status="BLOQUEADA">
+                                <h5 class="kanban-title text-center"><i class="bi bi-exclamation-octagon"></i> Bloqueada</h5>
+                                <div id="kanban-blocked" class="kanban-tasks-container"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-3">
-                        <div class="kanban-column" data-status="CONCLUIDA">
-                            <h5 class="kanban-title text-center"><i class="bi bi-check-circle"></i> Concluída</h5>
-                            <div id="kanban-completed" class="kanban-tasks-container"></div>
+                        <div class="col-md-3">
+                            <div class="kanban-column" data-status="CONCLUIDA">
+                                <h5 class="kanban-title text-center"><i class="bi bi-check-circle"></i> Concluída</h5>
+                                <div id="kanban-completed" class="kanban-tasks-container"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Seção de Projetos -->
-            <div id="projects-section" class="section-content d-none">
+            <div id="projects-section" class="section-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
                     <h1 class="h2"><i class="bi bi-kanban"></i> Projetos</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -102,9 +98,6 @@
                                                       'bg-vscode-gray'}">
                                             ${projeto.status.replace('_', ' ')}
                                         </span>
-                                        <a href="projeto-detalhes.jsp?id=${projeto.id}" class="btn btn-sm btn-outline-vscode-blue">
-                                            <i class="bi bi-arrow-right"></i> Detalhes
-                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +107,7 @@
             </div>
 
             <!-- Seção de Pessoas -->
-            <div id="people-section" class="section-content d-none">
+            <div id="people-section" class="section-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
                     <h1 class="h2"><i class="bi bi-people-fill"></i> Pessoas</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -144,7 +137,7 @@
             </div>
 
             <!-- Seção de Tarefas -->
-            <div id="tasks-section" class="section-content d-none">
+            <div id="tasks-section" class="section-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
                     <h1 class="h2"><i class="bi bi-list-task"></i> Tarefas</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -193,7 +186,7 @@
             </div>
 
             <!-- Seção de Membros -->
-            <div id="members-section" class="section-content d-none">
+            <div id="members-section" class="section-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom border-vscode-border">
                     <h1 class="h2"><i class="bi bi-person-plus"></i> Membros</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">

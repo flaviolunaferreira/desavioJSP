@@ -119,7 +119,7 @@ public class MembroController {
         return ResponseEntity.ok(membroService.listarProjetosDaPessoa(pessoaId));
     }
 
-    private URI buildUri(MembroResponseDTO response) {
+    URI buildUri(MembroResponseDTO response) {
         return URI.create("/api/membros/" + response.getProjeto().getId() + "/" + response.getPessoa().getId());
     }
 }

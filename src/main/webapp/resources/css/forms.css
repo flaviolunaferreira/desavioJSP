@@ -1,41 +1,58 @@
-/* Formulários e inputs */
-.form-control, .form-select {
+/* FORMULÁRIOS */
+.form-container {
+    padding: 20px;
     background-color: #2d2d2d;
-    color: var(--vscode-foreground);
+    border-radius: 5px;
     border: 1px solid var(--vscode-border);
+    margin-bottom: 20px;
 }
 
-.form-control:focus, .form-select:focus {
-    background-color: #2d2d2d;
-    color: var(--vscode-foreground);
-    border-color: var(--vscode-blue);
-    box-shadow: 0 0 0 0.25rem rgba(0, 122, 204, 0.25);
-}
-
-.form-check-input {
-    background-color: #2d2d2d;
-    border: 1px solid var(--vscode-border);
-}
-
-.form-check-input:checked {
-    background-color: var(--vscode-blue);
-    border-color: var(--vscode-blue);
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
 .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
     color: var(--vscode-foreground);
 }
 
-/* Modal */
-.modal-content {
-    background-color: #2d2d2d;
+.form-control, .form-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background-color: #252526;
     border: 1px solid var(--vscode-border);
+    color: var(--vscode-foreground);
+    border-radius: 4px;
+    transition: border-color 0.15s ease-in-out;
 }
 
-.modal-header, .modal-footer {
-    border-color: var(--vscode-border);
+.form-control:focus, .form-select:focus {
+    border-color: var(--vscode-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
 }
 
-.btn-close {
-    filter: invert(1);
+/* Campos lado a lado */
+.row-fields {
+    display: flex;
+    gap: 15px;
+}
+
+.row-fields .form-group {
+    flex: 1;
+}
+
+/* Campos pequenos */
+.small-field {
+    max-width: 200px;
+}
+
+/* Checkboxes e radios */
+.form-check {
+    margin-bottom: 1rem;
+}
+
+.form-check-input {
+    margin-right: 0.5rem;
 }

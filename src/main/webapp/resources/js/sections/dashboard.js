@@ -94,11 +94,14 @@ class DashboardSection {
 
     async loadKanbanTasks() {
         try {
+            Ui.showLoading(true);
             const tasks = await ApiService.get('/api/tarefas/recentes');
             this.renderKanbanTasks(tasks);
         } catch (error) {
             console.error('Erro ao carregar tarefas do Kanban:', error);
             Ui.showError('Erro ao carregar tarefas');
+        } finally {
+            Ui.showLoading(false);
         }
     }
 

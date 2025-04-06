@@ -1,84 +1,98 @@
-class ApiService {
-    static async get(url) {
-        try {
-            const response = await $.ajax({
-                url: url,
-                method: 'GET',
-                contentType: 'application/json'
-            });
-            return response;
-        } catch (error) {
-            console.error(`GET request failed to ${url}:`, error);
-            throw this.handleError(error);
-        }
-    }
 
-    static async post(url, data) {
-        try {
-            const response = await $.ajax({
-                url: url,
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data)
-            });
-            return response;
-        } catch (error) {
-            console.error(`POST request failed to ${url}:`, error);
-            throw this.handleError(error);
+    class ApiService {
+        static async get(url) {
+            try {
+                return await $.ajax({
+                    url: url,
+                    method: 'GET',
+                    contentType: 'application/json'
+                });
+            } catch (error) {
+                console.error(`GET request failed to ${url}:`, error);
+                throw this.handleError(error);
+            }
         }
-    }
 
-    static async put(url, data) {
-        try {
-            const response = await $.ajax({
-                url: url,
-                method: 'PUT',
-                contentType: 'application/json',
-                data: JSON.stringify(data)
-            });
-            return response;
-        } catch (error) {
-            console.error(`PUT request failed to ${url}:`, error);
-            throw this.handleError(error);
+        static async post(url, data) {
+            try {
+                return await $.ajax({
+                    url: url,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data)
+                });
+            } catch (error) {
+                console.error(`POST request failed to ${url}:`, error);
+                throw this.handleError(error);
+            }
         }
-    }
 
-    static async patch(url, data) {
-        try {
-            const response = await $.ajax({
-                url: url,
-                method: 'PATCH',
-                contentType: 'application/json',
-                data: JSON.stringify(data)
-            });
-            return response;
-        } catch (error) {
-            console.error(`PATCH request failed to ${url}:`, error);
-            throw this.handleError(error);
+        static async put(url, data) {
+            try {
+                return await $.ajax({
+                    url: url,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data)
+                });
+            } catch (error) {
+                console.error(`PUT request failed to ${url}:`, error);
+                throw this.handleError(error);
+            }
         }
-    }
 
-    static async delete(url) {
-        try {
-            const response = await $.ajax({
-                url: url,
-                method: 'DELETE',
-                contentType: 'application/json'
-            });
-            return response;
-        } catch (error) {
-            console.error(`DELETE request failed to ${url}:`, error);
-            throw this.handleError(error);
+        static async patch(url, data) {
+            try {
+                return await $.ajax({
+                    url: url,
+                    method: 'PATCH',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data)
+                });
+            } catch (error) {
+                console.error(`PATCH request failed to ${url}:`, error);
+                throw this.handleError(error);
+            }
         }
-    }
 
-    static handleError(error) {
-        if (error.responseJSON) {
-            return new Error(error.responseJSON.message || 'Erro desconhecido na API');
+        static async delete(url) {
+            try {
+                return await $.ajax({
+                    url: url,
+                    method: 'DELETE',
+                    contentType: 'application/json'
+                });
+            } catch (error) {
+                console.error(`DELETE request failed to ${url}:`, error);
+                throw this.handleError(error);
+            }
         }
-        return new Error(error.statusText || 'Falha na conexão com o servidor');
+
+        static handleError(error) {
+            let errorMsg = 'Erro desconhecido';
+
+            if (error.responseJSON) {
+                // Erro estruturado do Spring
+                errorMsg = error.responseJSON.message ||
+                    error.responseJSON.error ||
+                    JSON.stringify(error.responseJSON);
+            } else if (error.responseText) {
+                try {
+                    // Tenta parsear como JSON
+                    const jsonError = JSON.parse(error.responseText);
+                    errorMsg = jsonError.message || jsonError.error || error.responseText;
+                } catch {
+                    // Texto simples
+                    errorMsg = error.responseText;
+                }
+            } else if (error.statusText) {
+                errorMsg = error.statusText;
+            }
+
+            console.error(`Erro na requisição:`, error);
+            throw new Error(errorMsg);
+        }
     }
-}
 
 // API específica para Projetos
 class ProjetoApi {

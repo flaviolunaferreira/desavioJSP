@@ -7,13 +7,15 @@ class FormBuilder {
     }
 
     static createField(fieldConfig, value = '') {
-        const { type, name, label, required, options, ...attrs } = fieldConfig;
+        const { type, name, label, required, options, placeholder, ...attrs } = fieldConfig;
         const fieldId = `${name}Field`;
         const isCheckbox = type === 'checkbox';
+        const isSmall = attrs.small;
 
         let fieldHtml = '';
         const commonAttrs = `id="${fieldId}" name="${name}" ${required ? 'required' : ''} 
-                           class="form-control ${isCheckbox ? 'form-check-input' : ''}"`;
+                       class="form-control ${isCheckbox ? 'form-check-input' : ''} ${isSmall ? 'small-field' : ''}"
+                       ${placeholder ? `placeholder="${placeholder}"` : ''}`;
 
         switch(type) {
             case 'text':
@@ -65,10 +67,12 @@ class FormBuilder {
 
     static buildForm(fields, formId) {
         return `
-            <form id="${formId}">
+        <form id="${formId}" class="needs-validation" novalidate>
+            <div class="form-row">
                 ${fields.join('')}
-                <div class="alert alert-danger d-none" id="formError"></div>
-            </form>
-        `;
+            </div>
+            <div class="alert alert-danger d-none" id="formError"></div>
+        </form>
+    `;
     }
 }

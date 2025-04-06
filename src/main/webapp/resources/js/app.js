@@ -14,6 +14,9 @@ class App {
         this.initNavigation();
         this.initEventListeners();
         this.showSection('dashboard');
+
+        // Inicializa os tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     initNavigation() {
@@ -26,12 +29,9 @@ class App {
 
     initEventListeners() {
         $(document).on('formSaved', (e, data) => {
-            // Atualiza a seção relevante quando um formulário é salvo
             if (this.sections[data.type + 's']) {
                 this.sections[data.type + 's'].init();
             }
-
-            // Atualiza dashboard se for projeto ou tarefa
             if (data.type === 'projeto' || data.type === 'tarefa') {
                 this.sections.dashboard.init();
             }
@@ -39,12 +39,17 @@ class App {
     }
 
     showSection(sectionId) {
-        $('.section-content').addClass('d-none');
-        $(`#${sectionId}-section`).removeClass('d-none');
+        // Esconde todas as seções
+        $('.section-content').removeClass('active').hide();
 
+        // Mostra apenas a seção selecionada
+        $(`#${sectionId}-section`).addClass('active').show();
+
+        // Atualiza a navegação
         $('.nav-link').removeClass('active');
         $(`.section-link[data-section="${sectionId}"]`).addClass('active');
 
+        // Inicializa a seção
         if (this.sections[sectionId]) {
             this.sections[sectionId].init();
         }

@@ -125,8 +125,12 @@
 <script>
     // Inicializa a seção de detalhes do projeto com o ID da URL
     $(document).ready(() => {
-        const projectId = new URLSearchParams(window.location.search).get('id');
+        // Pega o ID da URL formatada como "/projetos/1"
+        const pathParts = window.location.pathname.split('/');
+        const projectId = pathParts[pathParts.length - 1];
+
         if (projectId) {
+            carregarDadosProjeto(projectId);
             window.projectDetails = new ProjectDetailsSection(projectId);
             window.projectDetails.init();
         } else {
@@ -134,5 +138,40 @@
             window.location.href = '/';
         }
     });
+
+    function carregarDadosProjeto(id) {
+        $.get(`/api/projetos/${id}`)
+            .done(projeto => {
+                // Preenche os dados na página
+                $('#projectName').text(projeto.nome);
+                $('#projectDescription').text(projeto.descricao);
+                $('#projectStatus').text(projeto.status);
+                // ... preencha outros campos conforme necessário
+
+                // Carrega membros
+                carregarMembros(projectId);
+                // Carrega tarefas
+                carregarTarefas(projectId);
+            })
+            .fail(() => {
+                alert('Erro ao carregar projeto');
+                window.location.href = '/';
+            });
+    }
+
+    function carregarMembros(projectId) {
+        $.get(`/api/projetos/${projectId}/membros`)
+            .done(membros => {
+                const $container = $('#projectMembers').empty();
+                membros.forEach(membro => {
+                    $container.append(`
+                        <div class="mb-2">
+                            <span class="fw-bold">${membro.nome}</span>
+                            <span class="badge bg-secondary ms-2">${membro.funcao}</span>
+                        </div>
+                    `);
+                });
+            });
+    }
 
 </script>

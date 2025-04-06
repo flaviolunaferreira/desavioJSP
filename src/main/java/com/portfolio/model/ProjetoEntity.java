@@ -45,7 +45,7 @@ public class ProjetoEntity extends BasicEntity {
     @Column(length = 15)
     private RiscoProjeto risco;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_gerente", nullable = false,
             foreignKey = @ForeignKey(name = "fk_projeto_gerente"))
     private PessoaEntity gerente;

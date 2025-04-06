@@ -8,47 +8,57 @@ class TarefaForm extends FormBuilder {
     ];
 
     static async getForm(data, action, options) {
+        // Garanta que data não é undefined
+        data = data || {};
+
         const fields = [
-            `<input type="hidden" name="id" value="${data?.id || ''}">`
+            `<input type="hidden" name="id" value="${data.id || ''}">`
         ];
 
-        // Campo de projeto (se não estiver definido nas opções)
-        if (!options.projetoId) {
-            fields.push(await this.createProjetoField(data?.projeto?.id));
+        // Projeto ID - obrigatório
+        if (!options?.projetoId) {
+            fields.push(await this.createProjetoField(data.projeto?.id));
         } else {
             fields.push(`<input type="hidden" name="projetoId" value="${options.projetoId}">`);
+            data.projeto = data.projeto || { id: options.projetoId };
         }
+
+        // Status - obrigatório com valor padrão
+        const statusValue = data.status || 'PENDENTE';
 
         fields.push(
             this.createField({
                 type: 'text',
                 name: 'titulo',
                 label: 'Título',
-                required: true
-            }, data?.titulo),
+                required: true,
+                maxlength: 100
+            }, data.titulo || ''),
+
             this.createField({
                 type: 'textarea',
                 name: 'descricao',
-                label: 'Descrição'
-            }, data?.descricao),
-            await this.createResponsavelField(data?.responsavel?.id, options.projetoId),
+                label: 'Descrição',
+                maxlength: 500
+            }, data.descricao || ''),
+
+            await this.createResponsavelField(data.responsavel?.id, options?.projetoId),
+
             this.createField({
                 type: 'datetime-local',
                 name: 'dataLimite',
                 label: 'Data Limite'
-            }, data?.dataLimite ? new Date(data.dataLimite).toISOString().slice(0, 16) : '')
-        );
+            }, data.dataLimite ? new Date(data.dataLimite).toISOString().slice(0, 16) : ''),
 
-        if (action === 'editar') {
-            fields.push(
-                this.createField({
-                    type: 'select',
-                    name: 'status',
-                    label: 'Status',
-                    options: this.statusOptions
-                }, data?.status)
-            );
-        }
+            // Campo status sempre obrigatório
+            this.createField({
+                type: 'select',
+                name: 'status',
+                label: 'Status',
+                required: true,
+                options: this.statusOptions
+            }, statusValue)
+        );
 
         return this.buildForm(fields, 'tarefaForm');
     }
@@ -67,7 +77,7 @@ class TarefaForm extends FormBuilder {
                 label: 'Projeto',
                 required: true,
                 options: [
-                    { value: '', label: 'Selecione um projeto' },
+                    { value: '', label: 'Selecione um projeto', disabled: true },
                     ...options
                 ]
             }, selectedValue);
@@ -79,7 +89,7 @@ class TarefaForm extends FormBuilder {
                 label: 'Projeto',
                 required: true,
                 options: [
-                    { value: '', label: 'Erro ao carregar projetos' }
+                    { value: '', label: 'Erro ao carregar projetos', disabled: true }
                 ]
             }, selectedValue);
         }
@@ -105,8 +115,9 @@ class TarefaForm extends FormBuilder {
                 type: 'select',
                 name: 'responsavel.id',
                 label: 'Responsável',
+                required: false, // Alterado para não obrigatório conforme DTO
                 options: [
-                    { value: '', label: 'Selecione um responsável' },
+                    { value: '', label: 'Selecione um responsável', disabled: true },
                     ...options
                 ]
             }, selectedValue);
@@ -116,8 +127,9 @@ class TarefaForm extends FormBuilder {
                 type: 'select',
                 name: 'responsavel.id',
                 label: 'Responsável',
+                required: false,
                 options: [
-                    { value: '', label: 'Erro ao carregar responsáveis' }
+                    { value: '', label: 'Erro ao carregar responsáveis', disabled: true }
                 ]
             }, selectedValue);
         }
