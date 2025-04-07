@@ -32,7 +32,7 @@ Banco de dados configurado (application.properties)
 Instalação
 bash
 Copy
-git clone [repositório]
+git clone [[repositório](https://github.com/flaviolunaferreira/desavioJSP.git)]
 cd projeto
 mvn clean install
 Execução
