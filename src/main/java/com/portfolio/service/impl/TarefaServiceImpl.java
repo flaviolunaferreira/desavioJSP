@@ -18,9 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -164,14 +162,15 @@ public class TarefaServiceImpl implements TarefaService {
         }
     }
 
-//    @Override
-//    public List<TarefaResponseDTO> filtrarTarefas(Long projetoId, String status) {
-//        StatusTarefa statusEnum = (status != null) ? StatusTarefa.valueOf(status) : null;
-//
-//        List<TarefaEntity> tarefas = tarefaRepository.filtrarTarefas(projetoId, statusEnum);
-//
-//        return tarefas.stream()
-//                .map(TarefaResponseDTO::fromEntity)
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public List<TarefaResponseDTO> filtrarTarefas(Long projetoId, String status) {
+        StatusTarefa statusEnum = (status != null) ? StatusTarefa.valueOf(status) : null;
+
+        List<TarefaEntity> tarefas = tarefaRepository.filtrarPorProjetoEStatus(projetoId, statusEnum);
+
+        return tarefas.stream()
+                .map(TarefaResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 }

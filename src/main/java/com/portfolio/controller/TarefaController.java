@@ -127,12 +127,12 @@ public class TarefaController {
         return ResponseEntity.ok(tarefaService.listarTarefasRecentes(limit));
     }
 
-//    @GetMapping("/filtrar")
-//    public List<TarefaResponseDTO> filtrarTarefas(
-//            @RequestParam(required = false) Long projetoId,
-//            @RequestParam(required = false) String status) {
-//        return tarefaService.filtrarTarefas(projetoId, status);
-//    }
+    @GetMapping("/filtrar")
+    public List<TarefaResponseDTO> filtrarTarefas(
+            @RequestParam(required = false) Long projetoId,
+            @RequestParam(required = false) String status) {
+        return tarefaService.filtrarTarefas(projetoId, status);
+    }
 
     URI buildUri(TarefaResponseDTO response) {
         return URI.create("/api/tarefas/" + response.getId());
