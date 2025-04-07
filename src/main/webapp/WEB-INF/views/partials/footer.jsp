@@ -19,6 +19,7 @@
 <script src="${pageContext.request.contextPath}/resources/js/sections/tasks.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/sections/members.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/sections/project-details.js"></script>
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100"></div>
 
 <!-- App Main -->
 <script src="${pageContext.request.contextPath}/resources/js/app.js"></script>

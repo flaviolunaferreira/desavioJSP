@@ -46,40 +46,41 @@ class Ui {
      * Mostra um toast de notificação
      * @private
      */
-    static showToast(title, message, bgClass, duration) {
+    static showToast(title, message, type = 'info', duration = 3000) {
         const toastId = 'toast-' + Date.now();
+        const icon = {
+            success: 'bi-check-circle',
+            error: 'bi-exclamation-triangle',
+            warning: 'bi-exclamation-circle',
+            info: 'bi-info-circle'
+        }[type];
+
         const toast = $(`
-        <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" 
-             role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 20px; right: 20px; z-index: 1100">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <strong>${title}</strong><br>${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div id="${toastId}" class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-${type} text-white">
+                <i class="bi ${icon} me-2"></i>
+                <strong class="me-auto">${title}</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body bg-dark text-white">
+                ${message}
             </div>
         </div>
     `);
 
-        $('body').append(toast);
+        $('#toast-container').append(toast);
 
-        // Inicializa o toast manualmente
-        const toastElement = new bootstrap.Toast(document.getElementById(toastId), {
-            autohide: true,
-            delay: duration
-        });
-
-        toastElement.show();
-
-        // Remove o elemento do DOM após esconder
-        $(`#${toastId}`).on('hidden.bs.toast', function () {
-            $(this).remove();
-        });
-
-        // Configura o fechamento automático
         setTimeout(() => {
-            toast.find('.toast').toast('hide');
-            setTimeout(() => toast.remove(), 500);
+            toast.fadeOut(() => toast.remove());
         }, duration);
+    }
+
+    static showApiError(error) {
+        const message = error.responseJSON?.message ||
+            error.responseText ||
+            error.statusText ||
+            'Erro desconhecido';
+        this.showToast('Erro', message, 'error', 5000);
     }
 
     /**

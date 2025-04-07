@@ -1,7 +1,7 @@
 /* FORMULÁRIOS */
 .form-container {
     padding: 20px;
-    background-color: #2d2d2d;
+    background-color: var(--vscode-card-bg);
     border-radius: 5px;
     border: 1px solid var(--vscode-border);
     margin-bottom: 20px;
@@ -20,7 +20,7 @@
 .form-control, .form-select {
     width: 100%;
     padding: 0.5rem 0.75rem;
-    background-color: #252526;
+    background-color: var(--vscode-kanban-bg);
     border: 1px solid var(--vscode-border);
     color: var(--vscode-foreground);
     border-radius: 4px;

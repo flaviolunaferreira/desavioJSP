@@ -18,7 +18,7 @@
 
 /* Kanban */
 .kanban-column {
-    background-color: #252526;
+    background-color: var(--vscode-kanban-bg);
     border-radius: 4px;
     padding: 10px;
     min-height: 400px;
@@ -36,7 +36,7 @@
 
 /* Progress bar */
 .progress {
-    background-color: #252526;
+    background-color: var(--vscode-kanban-bg);
 }
 
 .progress-bar {

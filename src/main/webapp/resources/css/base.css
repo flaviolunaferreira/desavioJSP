@@ -9,19 +9,22 @@
     --vscode-orange: #ce9178;
     --vscode-gray: #858585;
     --vscode-border: #3c3c3c;
+    --vscode-card-bg: #2d2d2d;
+    --vscode-kanban-bg: #252526;
+    --vscode-chart-bg: #01150d;
+    --vscode-aqua: aqua;
 }
-
 
 /* ========== KANBAN BOARD ========== */
 .kanban-container {
-    background-color: #252526;
+    background-color: var(--vscode-kanban-bg);
     border: 1px solid var(--vscode-border);
     border-radius: 4px;
     padding: 15px;
     margin-top: 20px;
     height: auto;
     min-height: 500px;
-    overflow: visible; /* Alterado de auto para visible */
+    overflow: visible;
 }
 
 .kanban-header {
@@ -43,7 +46,7 @@
 .kanban-column {
     flex: 1;
     min-width: 280px;
-    background-color: #252526;
+    background-color: var(--vscode-kanban-bg);
     border: 1px solid var(--vscode-border);
     border-radius: 4px;
     padding: 15px;
@@ -91,7 +94,7 @@
 
 /* ========== TASK CARDS ========== */
 .task-card {
-    background-color: #2d2d2d;
+    background-color: var(--vscode-card-bg);
     border: 1px solid var(--vscode-border);
     border-radius: 4px;
     padding: 12px;
