@@ -43,7 +43,6 @@ class ProjectsSection {
                                 </span>
                                 <a href="projeto-detalhes.jsp?id=${project.id}" 
                                    class="btn btn-sm btn-outline-vscode-blue">
-                                    <i class="bi bi-arrow-right"></i> Detalhes
                                 </a>
                             </div>
                         </div>
@@ -63,7 +62,7 @@ class ProjectsSection {
         $(document).on('click', '.project-card', (e) => {
             const projectId = $(e.currentTarget).closest('.project-card').data('id');
             if (projectId) {
-                window.location.href = `projeto-detalhes.jsp?id=${projectId}`;
+                window.location.href = `/projetos/${projectId}`; // Usa a rota do controller
             }
         });
     }
