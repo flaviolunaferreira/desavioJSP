@@ -31,7 +31,7 @@
             </div>
             <div class="modal-footer border-vscode-border">
                 <button type="button" class="btn btn-vscode-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-vscode-blue" id="confirmActionButton">Confirmar</button>
+                <button type="button" class="btn btn-vscode-red" id="confirmActionButton">Confirmar</button>
             </div>
         </div>
     </div>

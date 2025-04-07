@@ -41,9 +41,20 @@ class ProjectsSection {
                                 <span class="badge ${Ui.getStatusColorClass(project.status)}">
                                     ${project.status.replace('_', ' ')}
                                 </span>
-                                <a href="projeto-detalhes.jsp?id=${project.id}" 
-                                   class="btn btn-sm btn-outline-vscode-blue">
-                                </a>
+                                <div>
+                                    <a href="/projetos/${project.id}" 
+                                       class="btn btn-sm btn-outline-vscode-blue">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-vscode-blue btn-edit ms-1"
+                                            data-type="projeto" data-action="editar" data-id="${project.id}">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-vscode-red btn-delete ms-1"
+                                            data-type="projeto" data-id="${project.id}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -59,10 +70,43 @@ class ProjectsSection {
             }
         });
 
+        // Listener para clique no card (visualização)
         $(document).on('click', '.project-card', (e) => {
-            const projectId = $(e.currentTarget).closest('.project-card').data('id');
-            if (projectId) {
-                window.location.href = `/projetos/${projectId}`; // Usa a rota do controller
+            // Evita redirecionar se clicou em um botão dentro do card
+            if ($(e.target).closest('button, a').length === 0) {
+                const projectId = $(e.currentTarget).closest('.project-card').data('id');
+                if (projectId) {
+                    window.location.href = `/projetos/${projectId}`;
+                }
+            }
+        });
+
+        // Listener para botão de exclusão
+        $(document).on('click', '.btn-delete', async (e) => {
+            e.stopPropagation();
+            const button = $(e.currentTarget);
+            const projectId = button.data('id');
+
+            try {
+
+                Ui.showLoading(true);
+
+                // Chama a API para excluir
+                await ApiService.delete(`/api/projetos/${projectId}`);
+
+                Ui.showSuccess('Projeto excluído com sucesso!');
+                await this.loadProjects(); // Recarrega a lista
+
+            } catch (error) {
+                console.error('Erro ao excluir projeto:', error);
+
+                // Mostra mensagem de erro específica da API ou genérica
+                const errorMsg = error.responseJSON?.message ||
+                    error.message ||
+                    'Erro ao excluir projeto';
+                Ui.showError(errorMsg);
+            } finally {
+                Ui.showLoading(false);
             }
         });
     }

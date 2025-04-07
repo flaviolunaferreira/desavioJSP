@@ -157,4 +157,17 @@ class Ui {
             default: return 'bg-vscode-gray';
         }
     }
+
+    static confirmDelete(message, callback) {
+        $('#confirmModalBody').text(message);
+        $('#confirmActionButton').removeClass('btn-vscode-blue').addClass('btn-vscode-red').text('Excluir');
+
+        const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        modal.show();
+
+        $('#confirmActionButton').off('click').on('click', () => {
+            callback();
+            modal.hide();
+        });
+    }
 }

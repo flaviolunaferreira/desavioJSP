@@ -57,3 +57,26 @@
     font-weight: normal;
     padding: 5px 8px;
 }
+
+.btn-outline-vscode-red {
+    color: var(--vscode-red);
+    border-color: var(--vscode-red);
+}
+
+.btn-outline-vscode-red:hover {
+    color: white;
+    background-color: var(--vscode-red);
+    border-color: var(--vscode-red);
+}
+
+.btn-vscode-red {
+    color: white;
+    background-color: var(--vscode-red);
+    border-color: var(--vscode-red);
+}
+
+.btn-vscode-red:hover {
+    background-color: #d12f2f;
+    border-color: #d12f2f;
+    color: white;
+}

@@ -59,6 +59,10 @@ class TasksSection {
                                 data-type="tarefa" data-action="editar" data-id="${task.id}">
                             <i class="bi bi-pencil"></i>
                         </button>
+                        <button class="btn btn-sm btn-outline-vscode-red btn-delete ms-1" 
+                            data-type="tarefa" data-id="${task.id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
