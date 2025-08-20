@@ -25,6 +25,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private final ProjetoRepository projetoRepository;
     private final PessoaRepository pessoaRepository;
+    private final MembroRepository membroRepository;
 
 
     @Override
@@ -122,7 +123,9 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     @Override
     public ProjetoEntity buscarProjetoComMembros(Long id) {
-        return null;
+        ProjetoEntity projeto = buscarProjetoValido(id);
+        membroRepository.findByProjeto(projeto);
+        return projeto;
     }
 
     // Métodos privados de validação (mantidos iguais)

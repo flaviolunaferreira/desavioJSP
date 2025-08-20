@@ -3,6 +3,7 @@ package com.portfolio.controller;
 import com.portfolio.dto.projeto.ProjetoRequestDTO;
 import com.portfolio.dto.projeto.ProjetoResponseDTO;
 import com.portfolio.dto.projeto.ProjetoStatusUpdateDTO;
+import com.portfolio.model.ProjetoEntity;
 import com.portfolio.service.ProjetoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -128,5 +129,19 @@ class ProjetoControllerTest {
         URI uri = projetoController.buildUri(response);
 
         assertEquals("/api/projetos/1", uri.toString());
+    }
+
+    @Test
+    void buscarProjetoComMembros_DeveRetornarProjeto() {
+        ProjetoEntity projeto = new ProjetoEntity();
+        projeto.setId(1L);
+
+        when(projetoService.buscarProjetoComMembros(1L)).thenReturn(projeto);
+
+        ProjetoEntity result = projetoService.buscarProjetoComMembros(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        verify(projetoService, times(1)).buscarProjetoComMembros(1L);
     }
 }
